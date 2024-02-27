@@ -1,0 +1,13 @@
+# Blender 4.0.2 MTL File: 'earth.blend'
+# www.blender.org
+
+newmtl Material.001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.850000 0.850000 0.850000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd 8k_earth_daymap.jpg
+map_Ke 8k_earth_nightmap.jpg
+map_Bump -bm 1.000000 8k_earth_normal_map.jpg
