@@ -81,6 +81,8 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh *mesh, const aiScene *scene) {
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        std::vector<std::shared_ptr<Texture>> emissionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, TextureType::EMISSION);
+        textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
     }
 
     return std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures));
