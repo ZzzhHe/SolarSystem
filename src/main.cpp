@@ -29,7 +29,6 @@
 void processInput(GLFWwindow *window); 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-std::vector<Vertex> set_date();
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -114,15 +113,22 @@ int main(){
 /*          ****    ****    ****        */
 
     // model
+    // Model backpackModel("res/models/pumkin-minecraft/Pumpkin.obj");
     Model backpackModel("res/models/earth/earth.obj");
 
-/*  -----   define light uniform   -----   */
-    glm::vec3 direct_light_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    glm::vec3 direct_light_direction = glm::vec3(-0.2f, -1.0f, -0.3f);
-    glm::vec3 direct_light_ambient = direct_light_color * 1.0f;
-    glm::vec3 direct_light_diffuse = direct_light_color * 1.0f;
-    glm::vec3 direct_light_specular = direct_light_color * 1.0f;
+/*  -----   define light uniform   -----   */
+    glm::vec3 point_light_position = glm::vec3( 3.0f,  -3.0f,  -3.0f);
+    glm::vec3 point_light_color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    float light_constant = 1.0f;
+    float light_linear = 0.007f;
+    float light_quadratic = 0.0002;
+
+    // point light
+    glm::vec3 point_light_ambient = point_light_color * 0.1f;
+    glm::vec3 point_light_diffuse = point_light_color * 0.7f;
+    glm::vec3 point_light_specular = point_light_color * 1.0f;
 
 
 /*  -----   -------   -----   */
@@ -151,11 +157,10 @@ int main(){
         glm::mat4 model = glm::mat4(1.0f);
 
         // light paarmeters
-        // directional light
-        direct_light_direction = glm::vec3(-0.2f, -1.0f, -0.3f);
-        direct_light_ambient = direct_light_color * 0.05f;
-        direct_light_diffuse = direct_light_color * 0.4f;
-        direct_light_specular = direct_light_color * 0.5f;
+        // point light
+        point_light_ambient = point_light_color * 0.05f;
+        point_light_diffuse = point_light_color * 0.6f;
+        point_light_specular = point_light_color * 1.0f;
 
 
         /*  -----   draw cubes -----   */
@@ -168,11 +173,14 @@ int main(){
         basicShader.setVec3("viewPos", camera.Position);
 
         // light properties
-        // direct
-        basicShader.setVec3("directLight.direction", direct_light_direction);
-        basicShader.setVec3("directLight.ambient", direct_light_ambient);
-        basicShader.setVec3("directLight.diffuse", direct_light_diffuse);
-        basicShader.setVec3("directLight.specular", direct_light_specular);
+        // point
+        basicShader.setVec3("pointLight.position", point_light_position);
+        basicShader.setVec3("pointLight.ambient", point_light_ambient);
+        basicShader.setVec3("pointLight.diffuse", point_light_diffuse);
+        basicShader.setVec3("pointLight.specular", point_light_specular);
+        basicShader.setFloat("pointLight.constant", light_constant);
+        basicShader.setFloat("pointLight.linear", light_linear);
+        basicShader.setFloat("pointLight.quadratic", light_quadratic);
         
         // material properties
         basicShader.setFloat("material.shininess", 32.0f);
@@ -206,7 +214,7 @@ int main(){
 
             ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
         
-            ImGui::ColorEdit3("direct light color", (float*)&direct_light_color); 
+            ImGui::ColorEdit3("point light color", (float*)&point_light_color); 
         
             ImGui::SameLine();
             ImGui::Text("counter = %d", counter);
