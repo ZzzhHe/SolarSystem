@@ -29,7 +29,11 @@ class Camera {
         float yaw;
         float pitch;
 
-        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),  float yaw = YAW, float pitch = PITCH);
+        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f))
+            : Position(position), yaw(YAW), pitch(PITCH) {
+                updateCameraVectors();
+            }
+        Camera(glm::vec3 position, float yaw, float pitch);
 
         glm::mat4 getViewMatrix();
 

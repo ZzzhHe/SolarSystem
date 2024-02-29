@@ -14,6 +14,7 @@
 #include "Mesh.hpp"
 #include "Model.hpp"
 #include "Light.hpp"
+#include "Transform.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -27,13 +28,13 @@
 #include <vector>
 #include <memory>
 
-void processInput(GLFWwindow *window); 
+void processInput(GLFWwindow *window, Camera& camera); 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 900;
 
 
 // timing
@@ -44,7 +45,6 @@ bool firstMouse = true;
 
 float lastX = 400.0f, lastY = 300.0f;
 
-// camera
 Camera camera;
 
 int main(){
@@ -125,6 +125,9 @@ int main(){
 
 /*  -----   -------   -----   */
 
+// Camera
+camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
 
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -135,34 +138,23 @@ int main(){
         lastFrame = currentFrame;
 
         // input
-        processInput(window);
+        processInput(window, camera);
 
-        // rendering
         renderer.Clear();
 
-        // --- 2D ---
-        glm::mat4 trans = glm::mat4(1.0f);
+        Transform t(glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3(0.0f, (float)glfwGetTime(), 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-        // --- 3D ---
-        glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.f);
+        glm::mat4 model = t.GetModelMatrix();
         glm::mat4 view = camera.getViewMatrix();
-        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.f);
 
-        /*  -----   draw cubes -----   */
+
         basicShader.Use();
-        
+        basicShader.setMat4("model", model);
         basicShader.setMat4("projection", projection);
         basicShader.setMat4("view", view);
-        basicShader.setMat4("model", model);
-        basicShader.setMat4("trans", trans); 
+
         basicShader.setVec3("viewPos", camera.Position);
-
-        
-
-        float angle = 20.0f; 
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
-        model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        basicShader.setMat4("model", model);
         basicShader.UnUse();
         
         pointLight.SetupShader(&basicShader);
@@ -210,7 +202,7 @@ int main(){
 
 // handling user input for a given window 
 // query GLFW whether relevant keys are pressed/released this frame and react accordingly
-void processInput(GLFWwindow *window) {
+void processInput(GLFWwindow *window, Camera& camera) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
