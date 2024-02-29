@@ -113,12 +113,11 @@ int main(){
 /*          ****    ****    ****        */
 
     // model
-    // Model backpackModel("res/models/pumkin-minecraft/Pumpkin.obj");
-    Model backpackModel("res/models/earth/earth.obj");
+    Model earthModel("res/models/earth/earth.obj");
 
 
 /*  -----   define light uniform   -----   */
-    glm::vec3 point_light_position = glm::vec3( 3.0f,  -3.0f,  -3.0f);
+    glm::vec3 point_light_position = glm::vec3( 9.0f,  -5.0f,  -5.0f);
     glm::vec3 point_light_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
     float light_constant = 1.0f;
@@ -187,12 +186,12 @@ int main(){
 
         float angle = 20.0f; 
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
-        model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
+        // model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
         basicShader.setMat4("model", model);
         basicShader.UnUse();
 
         // cubeMesh.Render(&basicShader);
-        backpackModel.Render(&basicShader);
+        earthModel.Render(&basicShader);
         
         // poll IO events
         glfwPollEvents();

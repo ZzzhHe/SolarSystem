@@ -61,7 +61,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 void main() {
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
-    // point light
     vec3 point_light = CalcPointLight(pointLight, norm, FragPos, viewDir);
     FragColor = vec4(point_light, 1.0);
 }
@@ -86,9 +85,13 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
   			     light.quadratic * (distance * distance));    
 
+    float emit = 1 - diff;
+    vec3 emission = texture(material.emission, TexCoords).rgb * emit;
+
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
+    emission *= attenuation;
 
-    return (ambient + diffuse + specular);
+    return (ambient + diffuse + specular + emission);
 } 
