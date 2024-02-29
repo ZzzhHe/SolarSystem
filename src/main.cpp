@@ -13,6 +13,7 @@
 #include "Texture.hpp"
 #include "Mesh.hpp"
 #include "Model.hpp"
+#include "Light.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -119,15 +120,7 @@ int main(){
 /*  -----   define light uniform   -----   */
     glm::vec3 point_light_position = glm::vec3( 9.0f,  -5.0f,  -5.0f);
     glm::vec3 point_light_color = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    float light_constant = 1.0f;
-    float light_linear = 0.007f;
-    float light_quadratic = 0.0002;
-
-    // point light
-    glm::vec3 point_light_ambient = point_light_color * 0.1f;
-    glm::vec3 point_light_diffuse = point_light_color * 0.7f;
-    glm::vec3 point_light_specular = point_light_color * 1.0f;
+    PointLight pointLight(point_light_position, point_light_color);
 
 
 /*  -----   -------   -----   */
@@ -155,13 +148,6 @@ int main(){
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
 
-        // light paarmeters
-        // point light
-        point_light_ambient = point_light_color * 0.05f;
-        point_light_diffuse = point_light_color * 0.6f;
-        point_light_specular = point_light_color * 1.0f;
-
-
         /*  -----   draw cubes -----   */
         basicShader.Use();
         
@@ -171,24 +157,15 @@ int main(){
         basicShader.setMat4("trans", trans); 
         basicShader.setVec3("viewPos", camera.Position);
 
-        // light properties
-        // point
-        basicShader.setVec3("pointLight.position", point_light_position);
-        basicShader.setVec3("pointLight.ambient", point_light_ambient);
-        basicShader.setVec3("pointLight.diffuse", point_light_diffuse);
-        basicShader.setVec3("pointLight.specular", point_light_specular);
-        basicShader.setFloat("pointLight.constant", light_constant);
-        basicShader.setFloat("pointLight.linear", light_linear);
-        basicShader.setFloat("pointLight.quadratic", light_quadratic);
         
-        // material properties
-        basicShader.setFloat("material.shininess", 32.0f);
 
         float angle = 20.0f; 
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
-        // model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
+        model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         basicShader.setMat4("model", model);
         basicShader.UnUse();
+        
+        pointLight.SetupShader(&basicShader);
 
         // cubeMesh.Render(&basicShader);
         earthModel.Render(&basicShader);
@@ -201,25 +178,14 @@ int main(){
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if (show_demo_window) {
-            ImGui::ShowDemoWindow(&show_demo_window);
-        }
-
         {
-            static float f = 0.0f;
-            static int counter = 0;
+            ImGui::Begin("Settings");
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        
             ImGui::ColorEdit3("point light color", (float*)&point_light_color); 
         
             ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
             
             ImGui::End();
         }

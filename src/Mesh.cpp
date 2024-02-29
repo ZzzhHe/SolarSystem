@@ -42,6 +42,7 @@ void Mesh::Render(Shader* shader) {
                 break;
         }
     }
+    shader->setFloat("material.shininess", 32.0f);
     
     this->m_VAO->Bind();
     this->m_IBO->Bind();
