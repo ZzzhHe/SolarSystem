@@ -7,6 +7,11 @@ public:
     glm::vec3 rotation;
     glm::vec3 scale;
 
+    Transform() 
+        :   position(glm::vec3(0.0f, 0.0f, 0.0f)),
+            rotation(glm::vec3(0.0f, 0.0f, 0.0f)),
+            scale(glm::vec3(1.0f, 1.0f, 1.0f)) {}
+
     Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) 
         : position(position), rotation(rotation), scale(scale) {}
 
@@ -18,5 +23,17 @@ public:
         model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
         model = glm::scale(model, scale);
         return model;
+    }
+
+    void UpdateRotation(glm::vec3 newRotation) {
+        rotation = newRotation;
+    }
+
+    void UpdatePosition(glm::vec3 newPosition) {
+        position = newPosition;
+    }
+
+    void UpdateScale(glm::vec3 newScale) {
+        scale = newScale;
     }
 };
