@@ -34,7 +34,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // settings
 const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 900;
+const unsigned int SCR_HEIGHT = 720;
 
 
 // timing
@@ -84,7 +84,8 @@ int main(){
     glEnable(GL_DEPTH_TEST);
 
 /*  -----   Shader  -----   */
-    Shader basicShader("res/shaders/BasicShader.shader");
+    Shader planetShader("res/shaders/PlanetShader.shader");
+    Shader starShader("res/shaders/StarShader.shader");
 /*  -----   -----  -----   */
 
 /*  -----   Blending  -----   */
@@ -115,18 +116,22 @@ int main(){
 
     // model
     Model earthModel("res/models/earth/earth.obj");
+    Model sunModel("res/models/sun/sun.obj");
 
 
 /*  -----   define light uniform   -----   */
-    glm::vec3 point_light_position = glm::vec3( 9.0f,  -5.0f,  -5.0f);
-    glm::vec3 point_light_color = glm::vec3(1.0f, 1.0f, 1.0f);
-    PointLight pointLight(point_light_position, point_light_color);
+    glm::vec3 sun_position = glm::vec3( 0.0f,  0.0f,  0.0f);
+    glm::vec3 sun_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    PointLight sunLight(sun_position, sun_color);
 
 
 /*  -----   -------   -----   */
 
-// Camera
-camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    // Camera
+    camera = Camera(glm::vec3(0.0f, 10.0f, 10.0f));
+
+    Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
+    Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
 
 
 /*          ****    ****    ****        */
@@ -142,25 +147,34 @@ camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
         renderer.Clear();
 
-        Transform t(glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3(0.0f, (float)glfwGetTime(), 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
 
-        glm::mat4 model = t.GetModelMatrix();
+        glm::mat4 model = earthTrans.GetModelMatrix();
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.f);
 
 
-        basicShader.Use();
-        basicShader.setMat4("model", model);
-        basicShader.setMat4("projection", projection);
-        basicShader.setMat4("view", view);
+        planetShader.Use();
+        planetShader.setMat4("model", model);
+        planetShader.setMat4("projection", projection);
+        planetShader.setMat4("view", view);
 
-        basicShader.setVec3("viewPos", camera.Position);
-        basicShader.UnUse();
+        planetShader.setVec3("viewPos", camera.Position);
+        planetShader.UnUse();
         
-        pointLight.SetupShader(&basicShader);
+        sunLight.SetupShader(&planetShader); 
 
-        // cubeMesh.Render(&basicShader);
-        earthModel.Render(&basicShader);
+        sunTrans.UpdateRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
+        model = sunTrans.GetModelMatrix();
+        starShader.Use();
+        starShader.setMat4("model", model);
+        starShader.setMat4("projection", projection);
+        starShader.setMat4("view", view);
+        starShader.UnUse();
+
+
+        earthModel.Render(&planetShader);
+        sunModel.Render(&starShader);
         
         // poll IO events
         glfwPollEvents();
@@ -173,7 +187,7 @@ camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
         {
             ImGui::Begin("Settings");
 
-            ImGui::ColorEdit3("point light color", (float*)&point_light_color); 
+            ImGui::ColorEdit3("point light color", (float*)&sun_color); 
         
             ImGui::SameLine();
 
