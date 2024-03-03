@@ -15,6 +15,7 @@
 #include "Model.hpp"
 #include "Light.hpp"
 #include "Transform.hpp"
+#include "OutlineRenderer.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -83,14 +84,14 @@ int main(){
     }    
 
     /*  -----   GLobal Opengl  -----   */
-    glEnable(GL_DEPTH_TEST);
+    GLCall(glEnable(GL_DEPTH_TEST));
 
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    GLCall(glEnable(GL_STENCIL_TEST));
+    GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+    GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
 
 /*  -----   -----   -----   -----   */
 
@@ -139,6 +140,8 @@ int main(){
     Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
     Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
+    // Outline
+    OutlineRenderer outlineRender;
 
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -179,40 +182,24 @@ int main(){
         starShader.UnUse();
 
         // OutLine
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilMask(0xFF);
+        outlineRender.PrepareStencilBufferWriting();
 
         earthModel.Render(&planetShader);
         sunModel.Render(&starShader);
 
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00); 
-        glDisable(GL_DEPTH_TEST);
-
-        outlineShader.Use();
-        outlineShader.setMat4("projection", projection);
-        outlineShader.setMat4("view", view);
+        outlineRender.PrepareOutlineRendering();
 
         model = earthTrans.GetModelMatrix();
+        outlineRender.SetupShader(&outlineShader, model, view, projection);
 
-        outlineShader.setMat4("model", model);
-        outlineShader.UnUse();
-
-        earthModel.Render(&outlineShader);
+        outlineRender.Render(&earthModel, &outlineShader);
         
-        outlineShader.Use();
-        outlineShader.setMat4("projection", projection);
-        outlineShader.setMat4("view", view);
-
         model = sunTrans.GetModelMatrix();
-        outlineShader.setMat4("model", model);
-        outlineShader.UnUse();
+        outlineRender.SetupShader(&outlineShader, model, view, projection);
 
-        sunModel.Render(&outlineShader);
+        outlineRender.Render(&sunModel, &outlineShader);
 
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);
-        GLCall(glEnable(GL_DEPTH_TEST));
+        outlineRender.Clean();
 
         // poll IO events
         glfwPollEvents();
