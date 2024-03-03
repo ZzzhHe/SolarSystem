@@ -81,20 +81,24 @@ int main(){
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }    
+
+    /*  -----   GLobal Opengl  -----   */
     glEnable(GL_DEPTH_TEST);
+
+    GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+/*  -----   -----   -----   -----   */
 
 /*  -----   Shader  -----   */
     Shader planetShader("res/shaders/PlanetShader.shader");
     Shader starShader("res/shaders/StarShader.shader");
+    Shader outlineShader("res/shaders/OutlineShader.shader");
 /*  -----   -----  -----   */
-
-/*  -----   Blending  -----   */
-    GLCall(glEnable(GL_BLEND));
-    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-/*  -----   -----  -----   */
-
-
-/*  -----   -----   -----   -----   */
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -130,8 +134,10 @@ int main(){
     // Camera
     camera = Camera(glm::vec3(0.0f, 10.0f, 10.0f));
 
-    Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
-    Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
+    float scaleFactor = 0.25f;
+
+    Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
 
 /*          ****    ****    ****        */
@@ -146,8 +152,8 @@ int main(){
         processInput(window, camera);
 
         renderer.Clear();
-
-        earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
+        
+        earthTrans.SetRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
 
         glm::mat4 model = earthTrans.GetModelMatrix();
         glm::mat4 view = camera.getViewMatrix();
@@ -164,7 +170,7 @@ int main(){
         
         sunLight.SetupShader(&planetShader); 
 
-        sunTrans.UpdateRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
+        sunTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
         model = sunTrans.GetModelMatrix();
         starShader.Use();
         starShader.setMat4("model", model);
@@ -172,10 +178,42 @@ int main(){
         starShader.setMat4("view", view);
         starShader.UnUse();
 
+        // OutLine
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
 
         earthModel.Render(&planetShader);
         sunModel.Render(&starShader);
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00); 
+        glDisable(GL_DEPTH_TEST);
+
+        outlineShader.Use();
+        outlineShader.setMat4("projection", projection);
+        outlineShader.setMat4("view", view);
+
+        model = earthTrans.GetModelMatrix();
+
+        outlineShader.setMat4("model", model);
+        outlineShader.UnUse();
+
+        earthModel.Render(&outlineShader);
         
+        outlineShader.Use();
+        outlineShader.setMat4("projection", projection);
+        outlineShader.setMat4("view", view);
+
+        model = sunTrans.GetModelMatrix();
+        outlineShader.setMat4("model", model);
+        outlineShader.UnUse();
+
+        sunModel.Render(&outlineShader);
+
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        GLCall(glEnable(GL_DEPTH_TEST));
+
         // poll IO events
         glfwPollEvents();
 

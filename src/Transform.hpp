@@ -25,15 +25,15 @@ public:
         return model;
     }
 
-    void UpdateRotation(glm::vec3 newRotation) {
+    void SetRotation(glm::vec3 newRotation) {
         rotation = newRotation;
     }
 
-    void UpdatePosition(glm::vec3 newPosition) {
+    void SetPosition(glm::vec3 newPosition) {
         position = newPosition;
     }
 
-    void UpdateScale(glm::vec3 newScale) {
+    void SetScale(glm::vec3 newScale) {
         scale = newScale;
     }
 };

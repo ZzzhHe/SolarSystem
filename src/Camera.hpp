@@ -12,7 +12,7 @@ enum Movement_Direction {
 };
 
 // Camera Value
-const float YAW = -90.0f;
+const float YAW = -120.0f;
 const float PITCH = -45.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
