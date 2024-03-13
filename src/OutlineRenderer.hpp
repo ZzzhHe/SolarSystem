@@ -8,15 +8,15 @@
 
 class OutlineRenderer {
     public: 
-        void PrepareStencilBufferWriting() {
-            GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
-            GLCall(glStencilMask(0xFF));
+        void EnableWriting() {
+            GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF)); // set any stencil to 1
+            GLCall(glStencilMask(0xFF)); // enable writing to the stencil buffer
         }
 
-        void PrepareOutlineRendering(){
-            GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
-            GLCall(glStencilMask(0x00)); 
-            GLCall(glDisable(GL_DEPTH_TEST));
+        void DisableWriting(){
+            GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF)); // only render if the stencil value is not 1
+            GLCall(glStencilMask(0x00)); // disable writing to the stencil buffer
+            GLCall(glDisable(GL_DEPTH_TEST)); // outline should not be occluded
         }
 
         void SetupShader(Shader* shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
@@ -32,8 +32,8 @@ class OutlineRenderer {
         }   
         
         void Clean() {
-            GLCall(glStencilMask(0xFF));
-            GLCall(glStencilFunc(GL_ALWAYS, 0, 0xFF));
-            GLCall(glEnable(GL_DEPTH_TEST));
+            GLCall(glStencilMask(0xFF)); 
+            GLCall(glStencilFunc(GL_ALWAYS, 0, 0xFF)); 
+            GLCall(glEnable(GL_DEPTH_TEST)); 
         }
 };
