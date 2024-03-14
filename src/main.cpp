@@ -16,6 +16,8 @@
 #include "Light.hpp"
 #include "Transform.hpp"
 #include "OutlineRenderer.hpp"
+#include "PickingTexture.hpp"
+#include "HDRFrameBuffer.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -34,8 +36,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // settings
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
 
 
 // timing
@@ -89,16 +91,21 @@ int main(){
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+    /* -----   Stencil Buffer for outlining -----  
     GLCall(glEnable(GL_STENCIL_TEST));
     GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
     GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+    */
 
 /*  -----   -----   -----   -----   */
+
+    // HDR Framebuffer
+    HDRFrameBuffer hdrFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
 
 /*  -----   Shader  -----   */
     Shader planetShader("res/shaders/PlanetShader.shader");
     Shader starShader("res/shaders/StarShader.shader");
-    Shader outlineShader("res/shaders/OutlineShader.shader");
+    Shader hdrShader("res/shaders/HDRShader.shader");
 /*  -----   -----  -----   */
 
     // Setup Dear ImGui context
@@ -133,15 +140,14 @@ int main(){
 /*  -----   -------   -----   */
 
     // Camera
-    camera = Camera(glm::vec3(0.0f, 10.0f, 10.0f));
+    camera = Camera(glm::vec3(10.0f, 23.0f, 10.0f));
+    // camera = Camera(glm::vec3(2.0f, 10.0f, 10.0f));
 
     float scaleFactor = 0.25f;
 
     Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
     Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
-    // Outline
-    OutlineRenderer outlineRender;
 
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -154,76 +160,42 @@ int main(){
         // input
         processInput(window, camera);
 
-        renderer.Clear();
-        
         earthTrans.SetRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
+        sunTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
 
-        glm::mat4 model = earthTrans.GetModelMatrix();
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.f);
+        glm::mat4 earth_model = earthTrans.GetModelMatrix();
+        glm::mat4 sun_model = sunTrans.GetModelMatrix();
 
+        renderer.Clear();
+        hdrFrameBuffer.Bind();
+        hdrFrameBuffer.Clear();
+            planetShader.Use();
+            planetShader.setMat4("model", earth_model);
+            planetShader.setMat4("projection", projection);
+            planetShader.setMat4("view", view);
+            planetShader.setVec3("viewPos", camera.Position);
+            planetShader.UnUse();
+            
+            sunLight.SetupShader(&planetShader); 
+            
+            starShader.Use();
+            starShader.setMat4("model", sun_model);
+            starShader.setMat4("projection", projection);
+            starShader.setMat4("view", view);
+            starShader.UnUse();
 
-        planetShader.Use();
-        planetShader.setMat4("model", model);
-        planetShader.setMat4("projection", projection);
-        planetShader.setMat4("view", view);
+            earthModel.Render(&planetShader);
+            sunModel.Render(&starShader);
+        hdrFrameBuffer.Unbind();
 
-        planetShader.setVec3("viewPos", camera.Position);
-        planetShader.UnUse();
-        
-        sunLight.SetupShader(&planetShader); 
-
-        sunTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
-        model = sunTrans.GetModelMatrix();
-        starShader.Use();
-        starShader.setMat4("model", model);
-        starShader.setMat4("projection", projection);
-        starShader.setMat4("view", view);
-        starShader.UnUse();
-
-        // OutLine
-        outlineRender.PrepareStencilBufferWriting();
-
-        earthModel.Render(&planetShader);
-        sunModel.Render(&starShader);
-
-        outlineRender.PrepareOutlineRendering();
-
-        model = earthTrans.GetModelMatrix();
-        outlineRender.SetupShader(&outlineShader, model, view, projection);
-
-        outlineRender.Render(&earthModel, &outlineShader);
-        
-        model = sunTrans.GetModelMatrix();
-        outlineRender.SetupShader(&outlineShader, model, view, projection);
-
-        outlineRender.Render(&sunModel, &outlineShader);
-
-        outlineRender.Clean();
+        hdrFrameBuffer.Clear();
+        hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
+        hdrFrameBuffer.Render(&hdrShader);
 
         // poll IO events
         glfwPollEvents();
-
-        // Start the ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        {
-            ImGui::Begin("Settings");
-
-            ImGui::ColorEdit3("point light color", (float*)&sun_color); 
-        
-            ImGui::SameLine();
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            
-            ImGui::End();
-        }
-
-        ImGui::EndFrame();
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // swap buffers ( from back to front screen)
         glfwSwapBuffers(window);
@@ -282,7 +254,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
     lastX = xpos;
     lastY = ypos;
 
-    camera.processMouse(xoffset, yoffset);
+    // camera.processMouse(xoffset, yoffset);
 }
 
 

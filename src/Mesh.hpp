@@ -20,14 +20,15 @@ struct Vertex {
 };
 
 class Mesh {
-    private:
+    protected:
         VertexArray* m_VAO;
         VertexBuffer* m_VBO;
         IndexBuffer* m_IBO;
         std::vector<std::shared_ptr<Texture>> textures;
 
     public:
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures);
+        Mesh() = default;
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures = {});
         ~Mesh();
 
         void Render(Shader* shader);
