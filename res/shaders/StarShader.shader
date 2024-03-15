@@ -36,6 +36,6 @@ in vec3 FragPos;
 uniform Material material;
 
 void main() {
-    vec3 emission = texture(material.emission, TexCoords).rgb;
+    vec3 emission = 1.5f * texture(material.emission, TexCoords).rgb;
     FragColor = vec4(emission, 1.0f);
 }

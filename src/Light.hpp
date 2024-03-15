@@ -53,3 +53,38 @@ class PointLight : public Light{
         glm::vec3 diffuse;
         glm::vec3 specular;
 };
+
+class DirectionalLight : public Light {
+public:
+    DirectionalLight(const glm::vec3& position, const glm::vec3& color, float intensity = 1.0f)
+        : Light(color, intensity), position(position),
+          ambient(color * 0.1f), diffuse(color * 0.4f), specular(color * 0.7f) {
+    }
+
+    void updatgeTarget(const glm::vec3& target) {
+        this->target = target;
+        updateDirection();
+    }
+
+    void SetupShader(Shader* shader) override {
+        shader->Use();
+        shader->setVec3("directLight.direction", direction);
+        shader->setVec3("directLight.ambient", ambient);
+        shader->setVec3("directLight.diffuse", diffuse);
+        shader->setVec3("directLight.specular", specular);
+        shader->setFloat("directLight.intensity", intensity);
+        shader->UnUse();
+    }
+
+private:
+    glm::vec3 position;
+    glm::vec3 target;
+    glm::vec3 direction;
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+
+    void updateDirection() {
+        direction = glm::normalize(target - position);
+    }
+};

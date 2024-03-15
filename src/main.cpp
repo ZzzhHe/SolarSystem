@@ -134,14 +134,14 @@ int main(){
 /*  -----   define light uniform   -----   */
     glm::vec3 sun_position = glm::vec3( 0.0f,  0.0f,  0.0f);
     glm::vec3 sun_color = glm::vec3(1.0f, 1.0f, 1.0f);
-    PointLight sunLight(sun_position, sun_color);
+    DirectionalLight sunLight(sun_position, sun_color);
 
 
 /*  -----   -------   -----   */
 
     // Camera
-    camera = Camera(glm::vec3(10.0f, 23.0f, 10.0f));
-    // camera = Camera(glm::vec3(2.0f, 10.0f, 10.0f));
+    // camera = Camera(glm::vec3(10.0f, 23.0f, 10.0f));
+    camera = Camera(glm::vec3(2.0f, 10.0f, 10.0f));
 
     float scaleFactor = 0.25f;
 
@@ -168,9 +168,12 @@ int main(){
         glm::mat4 earth_model = earthTrans.GetModelMatrix();
         glm::mat4 sun_model = sunTrans.GetModelMatrix();
 
+        glm::vec3 earth_location = glm::vec3(earth_model[3]);
+        sunLight.updatgeTarget(earth_location);
+
         renderer.Clear();
-        hdrFrameBuffer.Bind();
-        hdrFrameBuffer.Clear();
+        // hdrFrameBuffer.Bind();
+        // hdrFrameBuffer.Clear();
             planetShader.Use();
             planetShader.setMat4("model", earth_model);
             planetShader.setMat4("projection", projection);
@@ -188,11 +191,11 @@ int main(){
 
             earthModel.Render(&planetShader);
             sunModel.Render(&starShader);
-        hdrFrameBuffer.Unbind();
+        // hdrFrameBuffer.Unbind();
 
-        hdrFrameBuffer.Clear();
-        hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
-        hdrFrameBuffer.Render(&hdrShader);
+        // hdrFrameBuffer.Clear();
+        // hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
+        // hdrFrameBuffer.Render(&hdrShader);
 
         // poll IO events
         glfwPollEvents();
@@ -254,7 +257,5 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
     lastX = xpos;
     lastY = ypos;
 
-    // camera.processMouse(xoffset, yoffset);
+    camera.processMouse(xoffset, yoffset);
 }
-
-
