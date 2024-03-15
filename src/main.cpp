@@ -91,6 +91,8 @@ int main(){
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+    GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
+
     /* -----   Stencil Buffer for outlining -----  
     GLCall(glEnable(GL_STENCIL_TEST));
     GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
@@ -194,7 +196,7 @@ int main(){
         // hdrFrameBuffer.Unbind();
 
         // hdrFrameBuffer.Clear();
-        // hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
+        // hdrFrameBuffer.SetupShader(&hdrShader, 2.0f);
         // hdrFrameBuffer.Render(&hdrShader);
 
         // poll IO events

@@ -9,7 +9,7 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib) const {
 }
 
 void Renderer::Clear() const {
-    GLCall(glClearColor(0.1137f, 0.1255f, 0.1725f, 1.0f));
+    GLCall(glClearColor(0.0114f, 0.0126f, 0.0173f, 1.0f));
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     // GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)); // Stencil for outlining use
 }

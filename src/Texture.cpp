@@ -27,7 +27,7 @@ Texture::Texture(const std::string& path, const TextureType type)
 
     GLCall(glTexImage2D(GL_TEXTURE_2D,
                     0, 
-                    GL_RGBA, 
+                    GL_SRGB_ALPHA, // sRGB color space, gamma correction
                     m_Width, 
                     m_Height, 
                     0, 

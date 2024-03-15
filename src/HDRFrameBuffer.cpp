@@ -22,7 +22,7 @@ HDRFrameBuffer::HDRFrameBuffer(int width, int height) {
 
     GLCall(glGenTextures(1, &m_colorBuffer));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_colorBuffer));
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr));
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_FLOAT, nullptr));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     
@@ -74,10 +74,10 @@ void HDRFrameBuffer::SetupShader(Shader* shader, float exposure) {
 void HDRFrameBuffer::Render(Shader* shader) {
     std::vector<float> quadVertices = {
     // positions        // texCoords
-    -1.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-    -1.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-     1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-     1.0f,  1.0f,  0.0f, 1.0f, 1.0f
+    -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+     1.0f,  1.0f, 0.0f, 1.0f, 1.0f
     };
 
     std::vector<unsigned int> quadIndices = {
