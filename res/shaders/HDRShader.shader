@@ -23,8 +23,12 @@ uniform float exposure;
 
 void main()
 {
+    const float gamma = 2.2;
     vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
-    // tone mapping
-    vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+    // reinhard tone mapping
+    vec3 mapped = vec3(1.0f) - exp(-hdrColor * exposure);
+    // gamma correct
+    vec3 result = pow(mapped, vec3(1.0 / gamma));
     FragColor = vec4(result, 1.0);
+    // FragColor = vec4(hdrColor, 1.0);
 }

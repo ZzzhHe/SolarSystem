@@ -91,7 +91,7 @@ int main(){
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
+    // GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
 
     /* -----   Stencil Buffer for outlining -----  
     GLCall(glEnable(GL_STENCIL_TEST));
@@ -142,7 +142,6 @@ int main(){
 /*  -----   -------   -----   */
 
     // Camera
-    // camera = Camera(glm::vec3(10.0f, 23.0f, 10.0f));
     camera = Camera(glm::vec3(2.0f, 10.0f, 10.0f));
 
     float scaleFactor = 0.25f;
@@ -174,8 +173,8 @@ int main(){
         sunLight.updatgeTarget(earth_location);
 
         renderer.Clear();
-        // hdrFrameBuffer.Bind();
-        // hdrFrameBuffer.Clear();
+        hdrFrameBuffer.Bind();
+        hdrFrameBuffer.Clear();
             planetShader.Use();
             planetShader.setMat4("model", earth_model);
             planetShader.setMat4("projection", projection);
@@ -193,11 +192,11 @@ int main(){
 
             earthModel.Render(&planetShader);
             sunModel.Render(&starShader);
-        // hdrFrameBuffer.Unbind();
+        hdrFrameBuffer.Unbind();
 
-        // hdrFrameBuffer.Clear();
-        // hdrFrameBuffer.SetupShader(&hdrShader, 2.0f);
-        // hdrFrameBuffer.Render(&hdrShader);
+        hdrFrameBuffer.Clear();
+        hdrFrameBuffer.SetupShader(&hdrShader, 2.0f);
+        hdrFrameBuffer.Render(&hdrShader);
 
         // poll IO events
         glfwPollEvents();

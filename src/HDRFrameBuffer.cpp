@@ -22,13 +22,13 @@ HDRFrameBuffer::HDRFrameBuffer(int width, int height) {
 
     GLCall(glGenTextures(1, &m_colorBuffer));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_colorBuffer));
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_FLOAT, nullptr));
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width * 2, height * 2, 0, GL_RGBA, GL_FLOAT, nullptr));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     
     GLCall(glGenRenderbuffers(1, &m_rboDepth));
     GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_rboDepth));
-    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
+    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width * 2, height * 2));
 
     // Attachments
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_hdrFBO));
