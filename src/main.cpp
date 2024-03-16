@@ -195,7 +195,7 @@ int main(){
         hdrFrameBuffer.Unbind();
 
         hdrFrameBuffer.Clear();
-        hdrFrameBuffer.SetupShader(&hdrShader, 2.0f);
+        hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
         hdrFrameBuffer.Render(&hdrShader);
 
         // poll IO events
