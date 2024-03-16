@@ -203,7 +203,7 @@ int main(){
 
         // blur
         bool horizontal = true, first_iteration = true;
-        unsigned int rounds = 10;
+        unsigned int rounds = 16;
         
         for (int i = 0; i < rounds; i ++) {
             pingpongFrameBuffer.Bind(horizontal);
