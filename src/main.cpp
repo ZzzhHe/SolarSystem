@@ -17,7 +17,7 @@
 #include "Transform.hpp"
 #include "OutlineRenderer.hpp"
 #include "PickingTexture.hpp"
-#include "HDRFrameBuffer.hpp"
+#include "FrameBuffers.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -195,8 +195,11 @@ int main(){
         hdrFrameBuffer.Unbind();
 
         hdrFrameBuffer.Clear();
+        hdrShader.Use();
+        hdrFrameBuffer.BindTexture();
         hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
         hdrFrameBuffer.Render(&hdrShader);
+        hdrShader.UnUse();
 
         // poll IO events
         glfwPollEvents();
