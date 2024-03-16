@@ -206,11 +206,11 @@ int main(){
         unsigned int rounds = 10;
         
         for (int i = 0; i < rounds; i ++) {
-            blurShader.Use();
             pingpongFrameBuffer.Bind(horizontal);
+            blurShader.Use();
             blurShader.setInt("horizontal", horizontal);
             if (first_iteration) {
-                hdrFrameBuffer.BindTexture();
+                hdrFrameBuffer.BindTexture(1); // use brightness texture
             } else {
                 pingpongFrameBuffer.BindTexture(!horizontal);
             }
