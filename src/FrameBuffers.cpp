@@ -75,17 +75,12 @@ HDRFrameBuffer::~HDRFrameBuffer() {
     GLCall(glDeleteRenderbuffers(1, &m_rboDepth));
 }
 
-void HDRFrameBuffer::Bind() {
+void HDRFrameBuffer::Bind(int index) {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_FBO));
 }
 
 void HDRFrameBuffer::Unbind() {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-}
-
-void HDRFrameBuffer::BindTexture() {
-    GLCall(glActiveTexture(GL_TEXTURE0));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_colorBuffers[0]));
 }
 
 void HDRFrameBuffer::SetupShader(Shader* shader, float exposure) {
@@ -117,15 +112,10 @@ PingpongFrameBuffer::~PingpongFrameBuffer() {
     GLCall(glDeleteTextures(2, m_colorBuffers));
 }
 
-void PingpongFrameBuffer::Bind() {
-    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_FBOs[1]));
+void PingpongFrameBuffer::Bind(int index) {
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_FBOs[index]));
 }
 
 void PingpongFrameBuffer::Unbind() {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-}
-
-void PingpongFrameBuffer::BindTexture() {
-    GLCall(glActiveTexture(GL_TEXTURE1));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_colorBuffers[0]));
 }

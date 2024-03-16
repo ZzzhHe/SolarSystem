@@ -103,11 +103,13 @@ int main(){
 
     // HDR Framebuffer
     HDRFrameBuffer hdrFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
+    PingpongFrameBuffer pingpongFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
 
 /*  -----   Shader  -----   */
     Shader planetShader("res/shaders/PlanetShader.shader");
     Shader starShader("res/shaders/StarShader.shader");
     Shader hdrShader("res/shaders/HDRShader.shader");
+    Shader blurShader("res/shaders/BlurShader.shader");
 /*  -----   -----  -----   */
 
     // Setup Dear ImGui context
@@ -193,9 +195,10 @@ int main(){
             earthModel.Render(&planetShader);
             sunModel.Render(&starShader);
         hdrFrameBuffer.Unbind();
-
+        
         hdrFrameBuffer.Clear();
         hdrShader.Use();
+        hdrFrameBuffer.ActiveTexture();
         hdrFrameBuffer.BindTexture();
         hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
         hdrFrameBuffer.Render(&hdrShader);
