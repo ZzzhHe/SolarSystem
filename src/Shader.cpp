@@ -108,6 +108,7 @@ void Shader::UnUse() const {
     GLCall(glUseProgram(0));
 }
 
+// Don't use bool
 void Shader::setBool(const std::string &name, bool value) {
     GLCall(glUniform1i(GetUniformLocation(name), (int)value));
 }

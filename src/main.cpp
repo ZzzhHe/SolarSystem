@@ -151,6 +151,11 @@ int main(){
     Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
     Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
+    blurShader.Use();
+    blurShader.setInt("image", 0);
+    hdrShader.Use();
+    hdrFrameBuffer.SetBufferToTexture(&hdrShader, 0);
+    pingpongFrameBuffer.SetBufferToTexture(&hdrShader, 1);
 
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -195,14 +200,37 @@ int main(){
             earthModel.Render(&planetShader);
             sunModel.Render(&starShader);
         hdrFrameBuffer.Unbind();
+
+        // blur
+        bool horizontal = true, first_iteration = true;
+        unsigned int rounds = 10;
         
+        for (int i = 0; i < rounds; i ++) {
+            blurShader.Use();
+            pingpongFrameBuffer.Bind(horizontal);
+            blurShader.setInt("horizontal", horizontal);
+            if (first_iteration) {
+                hdrFrameBuffer.BindTexture();
+            } else {
+                pingpongFrameBuffer.BindTexture(!horizontal);
+            }
+            hdrFrameBuffer.RenderBufferToScreen(&blurShader);
+            horizontal = !horizontal;
+            if (first_iteration) {
+                first_iteration = false;
+            }
+        }
+        pingpongFrameBuffer.Unbind();
+
+        // render to default framebuffer
         hdrFrameBuffer.Clear();
         hdrShader.Use();
-        hdrFrameBuffer.ActiveTexture();
-        hdrFrameBuffer.BindTexture();
+        hdrFrameBuffer.ActiveTexture(0);
+        hdrFrameBuffer.BindTexture(0);
+        pingpongFrameBuffer.ActiveTexture(1);
+        pingpongFrameBuffer.BindTexture(!horizontal);
         hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
-        hdrFrameBuffer.Render(&hdrShader);
-        hdrShader.UnUse();
+        hdrFrameBuffer.RenderBufferToScreen(&hdrShader);
 
         // poll IO events
         glfwPollEvents();

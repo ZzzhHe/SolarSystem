@@ -13,6 +13,8 @@ class FrameBuffer {
 
         virtual void Bind(int index = 0) = 0;
         virtual void Unbind() = 0;
+        virtual void SetBufferToTexture(Shader* shader, int index = 0) = 0;
+
         void Clear() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
@@ -25,7 +27,7 @@ class FrameBuffer {
             glBindTexture(GL_TEXTURE_2D, m_colorBuffers[index]);
         }
 
-        void Render(Shader * shader);
+        void RenderBufferToScreen(Shader * shader);
 
     protected:
         GLuint m_colorBuffers[2];
@@ -41,6 +43,10 @@ class HDRFrameBuffer : public FrameBuffer {
 
         void SetupShader(Shader* shader, float exposure);
 
+        void SetBufferToTexture(Shader * shader, int index = 0) override {
+            shader->setInt("hdrBuffer", index);
+        }
+
     private:
         GLuint m_FBO;
         GLuint m_rboDepth;
@@ -53,6 +59,10 @@ class PingpongFrameBuffer : public FrameBuffer{
 
         void Bind(int index = 0) override;
         void Unbind() override;
+
+        void SetBufferToTexture(Shader * shader, int index = 0) override {
+            shader->setInt("pingpongBuffer", index);
+        }
 
     private:
         GLuint m_FBOs[2]; 

@@ -17,7 +17,7 @@ FullScreenQuadMesh::FullScreenQuadMesh(std::vector<float> vertices, std::vector<
     this->m_VAO->AddBuffer(*this->m_VBO, layout);
 }
 
-void FrameBuffer::Render(Shader* shader) {
+void FrameBuffer::RenderBufferToScreen(Shader* shader) {
     std::vector<float> quadVertices = {
     // positions        // texCoords
     -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
