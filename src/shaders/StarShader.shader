@@ -38,10 +38,5 @@ uniform Material material;
 void main() {
     vec3 emission = 4.5f * texture(material.emission, TexCoords).rgb;
     FragColor = vec4(emission, 1.0f);
-    float brightness = dot(emission, vec3(0.2126, 0.7152, 0.0722));
-    if (brightness > 1.0f) {
-        BrightColor = vec4(emission, 1.0f);
-    } else {
-        BrightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    }
+    BrightColor = vec4(emission, 1.0f);
 }

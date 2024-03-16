@@ -106,10 +106,10 @@ int main(){
     PingpongFrameBuffer pingpongFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
 
 /*  -----   Shader  -----   */
-    Shader planetShader("res/shaders/PlanetShader.shader");
-    Shader starShader("res/shaders/StarShader.shader");
-    Shader hdrShader("res/shaders/HDRShader.shader");
-    Shader blurShader("res/shaders/BlurShader.shader");
+    Shader planetShader("src/shaders/PlanetShader.shader");
+    Shader starShader("src/shaders/StarShader.shader");
+    Shader hdrShader("src/shaders/HDRShader.shader");
+    Shader blurShader("src/shaders/BlurShader.shader");
 /*  -----   -----  -----   */
 
     // Setup Dear ImGui context

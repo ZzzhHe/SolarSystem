@@ -55,7 +55,7 @@ HDRFrameBuffer::HDRFrameBuffer(int width, int height) : FrameBuffer(){
     // Create and attach depth buffer (renderbuffer)
     GLCall(glGenRenderbuffers(1, &m_rboDepth));
     GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_rboDepth));
-    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width * 2, height * 2));
+    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width * 8, height * 8));
     GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rboDepth));
 
     // Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
