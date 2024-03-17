@@ -16,7 +16,7 @@ const float YAW = -120.0f;
 const float PITCH = -45.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
-const float FOV = 45.0f; // field of view
+const float FOV = 70.0f; // field of view
 
 class Camera {
     public:

@@ -131,10 +131,10 @@ int main(){
 /*          ****    ****    ****        */
 
     // model
+    Model moonModel("res/models/moon/moon.obj");
     Model earthModel("res/models/earth/earth.obj");
     Model sunModel("res/models/sun/sun.obj");
-
-
+    
 /*  -----   define light uniform   -----   */
     glm::vec3 sun_position = glm::vec3( 0.0f,  0.0f,  0.0f);
     glm::vec3 sun_color = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -148,8 +148,10 @@ int main(){
 
     float scaleFactor = 0.25f;
 
-    Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    
     Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    Transform moonTrans(glm::vec3(-5.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
     blurShader.Use();
     blurShader.setInt("image", 0);
@@ -168,37 +170,58 @@ int main(){
         // input
         processInput(window, camera);
 
-        earthTrans.SetRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
         sunTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
+        earthTrans.SetRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
+        moonTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 1.0f, 23.5f));
 
         glm::mat4 view = camera.getViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.f);
-        glm::mat4 earth_model = earthTrans.GetModelMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
+        
         glm::mat4 sun_model = sunTrans.GetModelMatrix();
+        glm::mat4 earth_model = earthTrans.GetModelMatrix();
+        glm::mat4 moon_model = moonTrans.GetModelMatrix();
 
-        glm::vec3 earth_location = glm::vec3(earth_model[3]);
-        sunLight.updatgeTarget(earth_location);
+
 
         renderer.Clear();
         hdrFrameBuffer.Bind();
         hdrFrameBuffer.Clear();
+
+
+            // the Earth
+            glm::vec3 earth_location = glm::vec3(earth_model[3]);
+            sunLight.updatgeTarget(earth_location);
+            sunLight.SetupShader(&planetShader); 
+
             planetShader.Use();
             planetShader.setMat4("model", earth_model);
             planetShader.setMat4("projection", projection);
             planetShader.setMat4("view", view);
             planetShader.setVec3("viewPos", camera.Position);
             planetShader.UnUse();
-            
-            sunLight.SetupShader(&planetShader); 
-            
+
+            earthModel.Render(&planetShader);
+
+            // the Moon
+            glm::vec3 moon_location = glm::vec3(moon_model[3]);
+            sunLight.updatgeTarget(moon_location);
+            sunLight.SetupShader(&planetShader);
+
+            planetShader.Use();
+            planetShader.setMat4("model", moon_model);
+            planetShader.UnUse();
+
+            moonModel.Render(&planetShader);
+
+            // the Sun
             starShader.Use();
             starShader.setMat4("model", sun_model);
             starShader.setMat4("projection", projection);
             starShader.setMat4("view", view);
             starShader.UnUse();
 
-            earthModel.Render(&planetShader);
             sunModel.Render(&starShader);
+
         hdrFrameBuffer.Unbind();
 
         // blur
