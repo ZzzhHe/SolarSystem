@@ -3,12 +3,12 @@
 
 #include "stb_image/stb_image.h"
 
+#include "GLDebug.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
-#include "GLDebug.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
 #include "Mesh.hpp"
@@ -19,9 +19,11 @@
 #include "PickingTexture.hpp"
 #include "FrameBuffers.hpp"
 
+/* include imgui
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+ */
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -112,7 +114,7 @@ int main(){
     Shader blurShader("src/shaders/BlurShader.shader");
 /*  -----   -----  -----   */
 
-    // Setup Dear ImGui context
+	/* Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -124,6 +126,7 @@ int main(){
     ImGui_ImplGlfw_InitForOpenGL(window, true);
 
     bool show_demo_window = false;
+	*/
 
 
 /*          ****    ****    ****        */
@@ -264,11 +267,13 @@ int main(){
     }
 /*  -----   -----   -----   -----   */
     
+	/* Imgui end
     ImGui_ImplGlfw_Shutdown();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui::DestroyContext();
     glfwTerminate();
     return 0;
+	 */
 
 }
 
