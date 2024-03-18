@@ -15,7 +15,7 @@ enum Movement_Direction {
 const float YAW = -120.0f;
 const float PITCH = -45.0f;
 const float SPEED = 2.5f;
-const float SENSITIVITY = 0.1f;
+const float SENSITIVITY = 0.15f;
 const float FOV = 70.0f; // field of view
 
 class Camera {
@@ -40,6 +40,8 @@ class Camera {
         void processKeyboard(Movement_Direction direction, float deltaTime) ;
 
         void processMouse(float xoffset, float yoffset);
+	
+		void earthCameraTracking(glm::vec3 position);
 
     private:
         void updateCameraVectors();

@@ -48,6 +48,13 @@ void Camera::processMouse(float xoffset, float yoffset) {
     updateCameraVectors();
 }
 
+void Camera::earthCameraTracking(glm::vec3 earth_position) {
+	glm::vec3 normal = glm::normalize(glm::cross(earth_position, glm::vec3(0.0f, 1.0f, 0.0f)));
+	this->Position = earth_position + normal * 6.0f;
+	updateCameraVectors();
+}
+
+
 void Camera::updateCameraVectors() {
     glm::vec3 direction;
     direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));

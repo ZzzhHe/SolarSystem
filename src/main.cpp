@@ -147,16 +147,17 @@ int main(){
 /*  -----   -------   -----   */
 
     // Camera
-    camera = Camera(glm::vec3(2.0f, 10.0f, 10.0f));
-
-    float scaleFactor = 0.25f;
+    camera = Camera(glm::vec3(190.0f, 20.0f, 10.0f));
 	
-	glm::vec3 earth_position = glm::vec3(-10.0f, 0.0f, 0.0f);
-	glm::vec3 moon_position = glm::vec3(3.0f, 0.0f, 0.0f) + earth_position;
-    
-    Transform sunTrans(sun_position, glm::vec3(0.0f), glm::vec3(0.0f), scaleFactor);
-    Transform earthTrans(earth_position, glm::vec3(0.0f), glm::vec3(0.0f), scaleFactor);
-    Transform moonTrans(moon_position, glm::vec3(0.0f), glm::vec3(0.0f), scaleFactor);
+	glm::vec3 earth_position = glm::vec3(200.0f, 0.0f, 0.0f);
+	float sun_rotate_speed_factor = 0.001f;
+	float earth_rotate_speed_factor = 20.0f;
+	float earth_orbit_speed_factor = 20 / 36.5f; // 1 / 365
+	float moon_rotate_orbit_speed_factor = 20 / 2.73f; // 1 / 27.3f
+	
+	Transform sunTrans(sun_position, 0.0f, 10.9f);
+    Transform earthTrans(sun_position, 200.0f, 0.25f);
+    Transform moonTrans(earth_position, 6.0f, 0.3f);
 
     blurShader.Use();
     blurShader.setInt("image", 0);
@@ -174,18 +175,26 @@ int main(){
 
         // input
         processInput(window, camera);
+		
+		float time = glfwGetTime();
 
-        sunTrans.UpdateRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
-        earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + glfwGetTime(), 23.5f));
-        moonTrans.UpdateRotation(glm::vec3(0.0f, glfwGetTime() * 1.0f, 23.5f));
-
+        sunTrans.UpdateRotation(glm::vec3(0.0f, time * sun_rotate_speed_factor, 0.0f));
+		glm::mat4 sun_model = sunTrans.GetModelMatrix();
+		
+        earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + time * earth_rotate_speed_factor, 23.5f));
+		earthTrans.UpdateOrbition(glm::vec3(0.0f, time * earth_orbit_speed_factor, 0.0f));
+		glm::mat4 earth_model = earthTrans.GetModelMatrix();
+		
+        moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+		moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+		moonTrans.UpdateCenter(earth_model[3]);
+		glm::mat4 moon_model = moonTrans.GetModelMatrix();
+		
+//		camera.earthCameraTracking(earth_model[3]);
+								  
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
         
-        glm::mat4 sun_model = sunTrans.GetModelMatrix();
-        glm::mat4 earth_model = earthTrans.GetModelMatrix();
-        glm::mat4 moon_model = moonTrans.GetModelMatrix();
-
         renderer.Clear();
         hdrFrameBuffer.Bind();
         hdrFrameBuffer.Clear();
