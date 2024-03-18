@@ -9,5 +9,5 @@ Ni 1.450000
 d 1.000000
 illum 1
 map_Kd albedo.jpg
-map_Ks roughness.jpg
+map_Ks dummy.jpg
 map_Ke dummy.jpg

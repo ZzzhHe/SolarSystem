@@ -150,11 +150,13 @@ int main(){
     camera = Camera(glm::vec3(2.0f, 10.0f, 10.0f));
 
     float scaleFactor = 0.25f;
-
+	
+	glm::vec3 earth_position = glm::vec3(-10.0f, 0.0f, 0.0f);
+	glm::vec3 moon_position = glm::vec3(3.0f, 0.0f, 0.0f) + earth_position;
     
-    Transform sunTrans(sun_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-    Transform earthTrans(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-    Transform moonTrans(glm::vec3(-5.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    Transform sunTrans(sun_position, glm::vec3(0.0f), glm::vec3(0.0f), scaleFactor);
+    Transform earthTrans(earth_position, glm::vec3(0.0f), glm::vec3(0.0f), scaleFactor);
+    Transform moonTrans(moon_position, glm::vec3(0.0f), glm::vec3(0.0f), scaleFactor);
 
     blurShader.Use();
     blurShader.setInt("image", 0);
@@ -173,9 +175,9 @@ int main(){
         // input
         processInput(window, camera);
 
-        sunTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
-        earthTrans.SetRotation(glm::vec3(0.0f, -30.0f + glfwGetTime() * 2.0f, 23.5f));
-        moonTrans.SetRotation(glm::vec3(0.0f, glfwGetTime() * 1.0f, 23.5f));
+        sunTrans.UpdateRotation(glm::vec3(0.0f, glfwGetTime() * 0.1f, 0.0f));
+        earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + glfwGetTime(), 23.5f));
+        moonTrans.UpdateRotation(glm::vec3(0.0f, glfwGetTime() * 1.0f, 23.5f));
 
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
@@ -183,8 +185,6 @@ int main(){
         glm::mat4 sun_model = sunTrans.GetModelMatrix();
         glm::mat4 earth_model = earthTrans.GetModelMatrix();
         glm::mat4 moon_model = moonTrans.GetModelMatrix();
-
-
 
         renderer.Clear();
         hdrFrameBuffer.Bind();
