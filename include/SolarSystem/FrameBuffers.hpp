@@ -76,16 +76,11 @@ class DepthMapFrameBuffer: public FrameBuffer {
 		void Unbind() override;
 		void Clear() override;
 	
-		void SetupShader(Shader * shader, glm::mat4 lightSpaceMatrix){
-			shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-		}
-	
 		void SetBufferToTexture(Shader * shader, int index = 0) override {
 			shader->setInt("depthMap", index);
 		}
 
-
-		void BindTexture(int index = 0) {
+		void BindTexture() {
 			glBindTexture(GL_TEXTURE_2D, depthMap);
 		}
 	

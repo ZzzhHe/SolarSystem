@@ -204,7 +204,7 @@ int main(){
 		earth_position = glm::vec3(earth_model[3]);
 		
 //      moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
-		moonTrans.UpdateOrbition(glm::vec3(0.0f, +50.0f, 0.0f));
+		// moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
 		moonTrans.UpdateCenter(earth_model[3]);
 		glm::mat4 moon_model = moonTrans.GetModelMatrix();
 		moon_position = glm::vec3(moon_model[3]);
@@ -214,29 +214,26 @@ int main(){
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
 		
+        glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 1.0f, 100.0f);
+
         renderer.Clear();
         // Depth -> Shadow
 
-		glm::mat4 lightSpaceMat = glm::mat4(0.0f);
+		
 		GLCall(glViewport(0, 0, SHADOW_WIDTH, ShADOW_HEIGHT));
 		depthFrameBuffer.Bind();
 		depthFrameBuffer.Clear();
 			depthShader.Use();
-			lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 1.0f, 100.0f);
-			depthFrameBuffer.SetupShader(&depthShader, lightSpaceMat);
+			
+			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 			depthShader.setMat4("model", earth_model);
 			earthModel.Render(&depthShader);
 		
 			depthShader.Use();
-			lightSpaceMat = GetLightSpaceMatrix(sun_position, moon_position, 1.0f, 100.0f);
-			depthFrameBuffer.SetupShader(&depthShader, lightSpaceMat);
+			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 			depthShader.setMat4("model", moon_model);
 			moonModel.Render(&depthShader);
-		
-			depthShader.Use();
-			lightSpaceMat = GetLightSpaceMatrix(sun_position, sun_position, 1.0f, 100.0f);
-			depthShader.setMat4("model", sun_model);
-			sunModel.Render(&depthShader);
+
 		depthFrameBuffer.Unbind();
 		
 		depthFrameBuffer.ActiveTexture(3);
@@ -252,8 +249,7 @@ int main(){
             sunLight.SetupShader(&planetShader);
 		
             planetShader.Use();
-			lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 1.0f, 100.0f);
-			depthFrameBuffer.SetupShader(&planetShader, lightSpaceMat);
+			planetShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 		
             planetShader.setMat4("model", earth_model);
             planetShader.setMat4("projection", projection);
@@ -268,8 +264,7 @@ int main(){
             sunLight.SetupShader(&planetShader);
 
             planetShader.Use();
-			lightSpaceMat = GetLightSpaceMatrix(sun_position, moon_position, 1.0f, 100.0f);
-			depthFrameBuffer.SetupShader(&planetShader, lightSpaceMat);
+			planetShader.setMat4("lightSpaceMatrix", lightSpaceMat);
             planetShader.setMat4("model", moon_model);
             planetShader.UnUse();
 

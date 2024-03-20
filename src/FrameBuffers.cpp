@@ -124,7 +124,7 @@ DepthMapFrameBuffer::DepthMapFrameBuffer(int width, int height): FrameBuffer() {
 	GLCall(glGenFramebuffers(1, &depthMapFBO));
 	GLCall(glGenTextures(1, &depthMap));
 	GLCall(glBindTexture(GL_TEXTURE_2D, depthMap));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);)
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
@@ -132,8 +132,8 @@ DepthMapFrameBuffer::DepthMapFrameBuffer(int width, int height): FrameBuffer() {
 	
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0));
-	glDrawBuffer(GL_NONE);
-	glDrawBuffer(GL_NONE);
+	GLCall(glDrawBuffer(GL_NONE));
+	GLCall(glReadBuffer(GL_NONE));
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
