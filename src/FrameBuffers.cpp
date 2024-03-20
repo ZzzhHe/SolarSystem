@@ -119,3 +119,37 @@ void PingpongFrameBuffer::Bind(int index) {
 void PingpongFrameBuffer::Unbind() {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
+
+DepthMapFrameBuffer::DepthMapFrameBuffer(int width, int height): FrameBuffer() {
+	GLCall(glGenFramebuffers(1, &depthMapFBO));
+	GLCall(glGenTextures(1, &depthMap));
+	GLCall(glBindTexture(GL_TEXTURE_2D, depthMap));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);)
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0));
+	glDrawBuffer(GL_NONE);
+	glDrawBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+DepthMapFrameBuffer::~DepthMapFrameBuffer() {
+	GLCall(glDeleteFramebuffers(1, &depthMapFBO));
+	GLCall(glDeleteTextures(1, &depthMap));
+}
+
+void DepthMapFrameBuffer::Bind(int index) {
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
+}
+
+void DepthMapFrameBuffer::Unbind() {
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+}
+
+void DepthMapFrameBuffer::Clear() {
+	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
+}

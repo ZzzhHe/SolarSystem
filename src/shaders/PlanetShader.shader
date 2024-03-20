@@ -8,17 +8,19 @@ layout (location = 2) in vec3 aNormal;
 out vec2 TexCoords;
 out vec3 Normal;
 out vec3 FragPos;
+out vec4 FragPosLightSpace;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 lightSpaceMatrix;
 
 void main() {
     gl_Position = projection * view * model * vec4(aPos, 1.0f); 
     TexCoords = aTexCoord;
     FragPos = vec3(model * vec4(aPos, 1.0));
     Normal = mat3(transpose(inverse(model))) * aNormal;
-    // Normal = aNormal;
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 }
 
 #shader fragment
@@ -30,6 +32,7 @@ layout (location = 1) out vec4 BrightColor;
 in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragPos;
+in vec4 FragPosLightSpace;
 
 struct Material {
     sampler2D diffuse; 
@@ -53,12 +56,17 @@ uniform DirectLight directLight;
 uniform vec3 viewPos;
 uniform Material material;
 
-vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir);
+// shadow
+uniform sampler2D depthMap;
+
+float ShadowCalculation(vec4 fragPosLightSpace);
+vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow);
 
 void main() {
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 direct_light = CalcDirectLight(directLight, norm, viewDir);
+    float shadow = ShadowCalculation(FragPosLightSpace);
+    vec3 direct_light = CalcDirectLight(directLight, norm, viewDir, shadow);
     FragColor = vec4(direct_light, 1.0);
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 0.9) {
@@ -68,7 +76,22 @@ void main() {
     }
 }
 
-vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir) {
+float ShadowCalculation(vec4 fragPosLightSpace) {
+	// perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(depthMap, projCoords.xy).r;
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}
+
+vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow) {
     vec3 lightDirection = normalize(-light.direction);
 
     // ambient
@@ -113,5 +136,5 @@ vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir) {
     
     vec3 emission = texture(material.emission, TexCoords).rgb * emit;
 
-    return (ambient + diffuse + specular + emission) * light.intensity;
-} 
+    return (ambient + (1.0f - shadow) * (diffuse + specular) + emission) * light.intensity;
+}

@@ -20,17 +20,21 @@ in vec2 TexCoords;
 
 uniform sampler2D hdrBuffer;
 uniform sampler2D pingpongBuffer;
+uniform sampler2D depthMap;
 uniform float exposure;
 
 void main()
 {
     const float gamma = 2.2;
     vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
+    
+    // bloom
     vec3 bloomColor = texture(pingpongBuffer, TexCoords).rgb;
-    hdrColor += bloomColor; 
-    vec3 mapped = vec3(1.0f) - exp(-hdrColor * exposure); // tone mapping
+    hdrColor += bloomColor;
+    
+	// tone mapping
+    vec3 mapped = vec3(1.0f) - exp(-hdrColor * exposure);
     
     vec3 result = pow(mapped, vec3(1.0 / gamma)); // gamma correct
     FragColor = vec4(result, 1.0);
-    // FragColor = vec4(hdrColor, 1.0);
 }

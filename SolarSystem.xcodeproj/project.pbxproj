@@ -44,12 +44,12 @@
 		FE47B4362BA76C8000F4C779 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		FE47B4382BA76C9500F4C779 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../../opt/homebrew/Cellar/glfw/3.4/lib; sourceTree = "<group>"; };
 		FE47B43A2BA76CDB00F4C779 /* libglfw.3.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.4.dylib; path = ../../../../../opt/homebrew/Cellar/glfw/3.4/lib/libglfw.3.4.dylib; sourceTree = "<group>"; };
-		FE47B4402BA7734200F4C779 /* BlurShader.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlurShader.shader; sourceTree = "<group>"; };
-		FE47B4412BA7734200F4C779 /* HDRShader.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HDRShader.shader; sourceTree = "<group>"; };
-		FE47B4422BA7734200F4C779 /* OutlineShader.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OutlineShader.shader; sourceTree = "<group>"; };
-		FE47B4432BA7734200F4C779 /* PickingShader.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PickingShader.shader; sourceTree = "<group>"; };
-		FE47B4442BA7734200F4C779 /* PlanetShader.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlanetShader.shader; sourceTree = "<group>"; };
-		FE47B4452BA7734200F4C779 /* StarShader.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StarShader.shader; sourceTree = "<group>"; };
+		FE47B4402BA7734200F4C779 /* BlurShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = BlurShader.shader; sourceTree = "<group>"; };
+		FE47B4412BA7734200F4C779 /* HDRShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = HDRShader.shader; sourceTree = "<group>"; };
+		FE47B4422BA7734200F4C779 /* OutlineShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = OutlineShader.shader; sourceTree = "<group>"; };
+		FE47B4432BA7734200F4C779 /* PickingShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = PickingShader.shader; sourceTree = "<group>"; };
+		FE47B4442BA7734200F4C779 /* PlanetShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = PlanetShader.shader; sourceTree = "<group>"; };
+		FE47B4452BA7734200F4C779 /* StarShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = StarShader.shader; sourceTree = "<group>"; };
 		FE47B4472BA7734200F4C779 /* Test.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Test.hpp; sourceTree = "<group>"; };
 		FE47B4492BA7734200F4C779 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		FE47B44A2BA7734200F4C779 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
@@ -587,6 +587,7 @@
 		FE47B6D22BA78C7600F4C779 /* FETCH_HEAD */ = {isa = PBXFileReference; lastKnownFileType = text; path = FETCH_HEAD; sourceTree = "<group>"; };
 		FE47B6D32BA78C7600F4C779 /* HEAD */ = {isa = PBXFileReference; lastKnownFileType = text; path = HEAD; sourceTree = "<group>"; };
 		FE47B6D42BA78C7600F4C779 /* index */ = {isa = PBXFileReference; lastKnownFileType = file; path = index; sourceTree = "<group>"; };
+		FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = DepthShader.shader; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -646,6 +647,7 @@
 				FE47B4432BA7734200F4C779 /* PickingShader.shader */,
 				FE47B4442BA7734200F4C779 /* PlanetShader.shader */,
 				FE47B4452BA7734200F4C779 /* StarShader.shader */,
+				FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

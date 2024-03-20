@@ -36,10 +36,14 @@
 void processInput(GLFWwindow *window, Camera& camera); 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, float far);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+const unsigned int SHADOW_WIDTH = 1024;
+const unsigned int ShADOW_HEIGHT = 1024;
 
 
 // timing
@@ -106,12 +110,16 @@ int main(){
     // HDR Framebuffer
     HDRFrameBuffer hdrFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
     PingpongFrameBuffer pingpongFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
+	
+	// Depth FrameBUffer for shadow
+	DepthMapFrameBuffer depthFrameBuffer(SHADOW_WIDTH, SHADOW_WIDTH);
 
 /*  -----   Shader  -----   */
     Shader planetShader("src/shaders/PlanetShader.shader");
     Shader starShader("src/shaders/StarShader.shader");
     Shader hdrShader("src/shaders/HDRShader.shader");
     Shader blurShader("src/shaders/BlurShader.shader");
+	Shader depthShader("src/shaders/DepthShader.shader");
 /*  -----   -----  -----   */
 
 	/* Setup Dear ImGui context
@@ -147,23 +155,32 @@ int main(){
 /*  -----   -------   -----   */
 
     // Camera
-    camera = Camera(glm::vec3(190.0f, 20.0f, 10.0f));
+//	camera = Camera(glm::vec3(190.0f, 20.0f, 10.0f));
+    camera = Camera(glm::vec3(39.0f, 5.0f, 2.0f));
 	
-	glm::vec3 earth_position = glm::vec3(200.0f, 0.0f, 0.0f);
+	glm::vec3 earth_position = glm::vec3(40.0f, 0.0f, 0.0f);
+	glm::vec3 moon_position = glm::vec3(39.0f, 0.0f, 0.0f);
+	
 	float sun_rotate_speed_factor = 0.001f;
 	float earth_rotate_speed_factor = 20.0f;
 	float earth_orbit_speed_factor = 20 / 36.5f; // 1 / 365
 	float moon_rotate_orbit_speed_factor = 20 / 2.73f; // 1 / 27.3f
 	
-	Transform sunTrans(sun_position, 0.0f, 10.9f);
-    Transform earthTrans(sun_position, 200.0f, 0.25f);
-    Transform moonTrans(earth_position, 6.0f, 0.3f);
-
+	Transform sunTrans(sun_position, 0.0f, 2.2f);
+    Transform earthTrans(sun_position, 40.0f, 0.05f);
+    Transform moonTrans(earth_position, -1.0f, 0.06f);
+	
+	// set all textures
     blurShader.Use();
     blurShader.setInt("image", 0);
+	
     hdrShader.Use();
     hdrFrameBuffer.SetBufferToTexture(&hdrShader, 0);
     pingpongFrameBuffer.SetBufferToTexture(&hdrShader, 1);
+	
+	planetShader.Use();
+	// diffuse 0, specular 1, emission 2
+	depthFrameBuffer.SetBufferToTexture(&planetShader, 3);
 
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -181,31 +198,63 @@ int main(){
         sunTrans.UpdateRotation(glm::vec3(0.0f, time * sun_rotate_speed_factor, 0.0f));
 		glm::mat4 sun_model = sunTrans.GetModelMatrix();
 		
-        earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + time * earth_rotate_speed_factor, 23.5f));
-		earthTrans.UpdateOrbition(glm::vec3(0.0f, time * earth_orbit_speed_factor, 0.0f));
+		earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + time * earth_rotate_speed_factor, 23.5f));
+//		earthTrans.UpdateOrbition(glm::vec3(0.0f, time * earth_orbit_speed_factor, 0.0f));
 		glm::mat4 earth_model = earthTrans.GetModelMatrix();
+		earth_position = glm::vec3(earth_model[3]);
 		
-        moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
-		moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+//      moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+//		moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
 		moonTrans.UpdateCenter(earth_model[3]);
 		glm::mat4 moon_model = moonTrans.GetModelMatrix();
+		moon_position = glm::vec3(moon_model[3]);
 		
 //		camera.earthCameraTracking(earth_model[3]);
 								  
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
-        
+		
         renderer.Clear();
-        hdrFrameBuffer.Bind();
+        // Depth -> Shadow
+
+		glm::mat4 lightSpaceMat = glm::mat4(0.0f);
+		GLCall(glViewport(0, 0, SHADOW_WIDTH, ShADOW_HEIGHT));
+		depthFrameBuffer.Bind();
+		depthFrameBuffer.Clear();
+			depthShader.Use();
+			lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 1.0f, 100.0f);
+			depthFrameBuffer.SetupShader(&depthShader, lightSpaceMat);
+			depthShader.setMat4("model", earth_model);
+			earthModel.Render(&depthShader);
+		
+			depthShader.Use();
+			lightSpaceMat = GetLightSpaceMatrix(sun_position, moon_position, 1.0f, 100.0f);
+			depthFrameBuffer.SetupShader(&depthShader, lightSpaceMat);
+			depthShader.setMat4("model", moon_model);
+			moonModel.Render(&depthShader);
+		
+			depthShader.Use();
+			lightSpaceMat = GetLightSpaceMatrix(sun_position, sun_position, 1.0f, 100.0f);
+			depthShader.setMat4("model", sun_model);
+			sunModel.Render(&depthShader);
+		depthFrameBuffer.Unbind();
+		
+		depthFrameBuffer.ActiveTexture(3);
+		depthFrameBuffer.BindTexture();
+		
+		// HDR
+		GLCall(glViewport(0, 0, SCR_WIDTH*2, SCR_HEIGHT*2));
+		hdrFrameBuffer.Bind();
         hdrFrameBuffer.Clear();
 
-
             // the Earth
-            glm::vec3 earth_location = glm::vec3(earth_model[3]);
-            sunLight.updatgeTarget(earth_location);
-            sunLight.SetupShader(&planetShader); 
-
+            sunLight.updatgeTarget(earth_position);
+            sunLight.SetupShader(&planetShader);
+		
             planetShader.Use();
+			lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 1.0f, 100.0f);
+			depthFrameBuffer.SetupShader(&planetShader, lightSpaceMat);
+		
             planetShader.setMat4("model", earth_model);
             planetShader.setMat4("projection", projection);
             planetShader.setMat4("view", view);
@@ -215,11 +264,12 @@ int main(){
             earthModel.Render(&planetShader);
 
             // the Moon
-            glm::vec3 moon_location = glm::vec3(moon_model[3]);
-            sunLight.updatgeTarget(moon_location);
+            sunLight.updatgeTarget(moon_position);
             sunLight.SetupShader(&planetShader);
 
             planetShader.Use();
+			lightSpaceMat = GetLightSpaceMatrix(sun_position, moon_position, 1.0f, 100.0f);
+			depthFrameBuffer.SetupShader(&planetShader, lightSpaceMat);
             planetShader.setMat4("model", moon_model);
             planetShader.UnUse();
 
@@ -260,10 +310,12 @@ int main(){
         // render to default framebuffer
         hdrFrameBuffer.Clear();
         hdrShader.Use();
-        hdrFrameBuffer.ActiveTexture(0);
+        // FrameBuffer Texture
+		hdrFrameBuffer.ActiveTexture(0);
         hdrFrameBuffer.BindTexture(0);
         pingpongFrameBuffer.ActiveTexture(1);
         pingpongFrameBuffer.BindTexture(!horizontal);
+		
         hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
         hdrFrameBuffer.RenderBufferToScreen(&hdrShader);
 
@@ -330,4 +382,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
     lastY = ypos;
 
     camera.processMouse(xoffset, yoffset);
+}
+
+glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, float far) {
+	glm::mat4 lightProjection, lightView;
+	glm::mat4 lightSpaceMatrix;
+	lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near, far);
+	lightView = glm::lookAt(position, lookat, glm::vec3(0.0, 1.0, 0.0));
+	lightSpaceMatrix = lightProjection * lightView;
+	
+	return lightSpaceMatrix;
 }

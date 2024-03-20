@@ -15,7 +15,7 @@ class FrameBuffer {
         virtual void Unbind() = 0;
         virtual void SetBufferToTexture(Shader* shader, int index = 0) = 0;
 
-        void Clear() {
+        virtual void Clear() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
@@ -66,6 +66,32 @@ class PingpongFrameBuffer : public FrameBuffer{
 
     private:
         GLuint m_FBOs[2]; 
+};
+
+class DepthMapFrameBuffer: public FrameBuffer {
+	public:
+		DepthMapFrameBuffer(int width, int height);
+		~DepthMapFrameBuffer() override;
+		void Bind(int index=0) override;
+		void Unbind() override;
+		void Clear() override;
+	
+		void SetupShader(Shader * shader, glm::mat4 lightSpaceMatrix){
+			shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+		}
+	
+		void SetBufferToTexture(Shader * shader, int index = 0) override {
+			shader->setInt("depthMap", index);
+		}
+
+
+		void BindTexture(int index = 0) {
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+		}
+	
+	private:
+		GLuint depthMapFBO;
+		GLuint depthMap;
 };
 
 class FullScreenQuadMesh : public Mesh {
