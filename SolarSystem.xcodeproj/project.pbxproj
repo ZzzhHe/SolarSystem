@@ -588,6 +588,7 @@
 		FE47B6D32BA78C7600F4C779 /* HEAD */ = {isa = PBXFileReference; lastKnownFileType = text; path = HEAD; sourceTree = "<group>"; };
 		FE47B6D42BA78C7600F4C779 /* index */ = {isa = PBXFileReference; lastKnownFileType = file; path = index; sourceTree = "<group>"; };
 		FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = DepthShader.shader; sourceTree = "<group>"; };
+		FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1270,6 +1271,7 @@
 		FE47B6602BA7740200F4C779 /* assets */ = {
 			isa = PBXGroup;
 			children = (
+				FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */,
 			);
 			path = assets;
 			sourceTree = "<group>";

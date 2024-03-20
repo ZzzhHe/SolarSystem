@@ -204,7 +204,7 @@ int main(){
 		earth_position = glm::vec3(earth_model[3]);
 		
 //      moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
-//		moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+		moonTrans.UpdateOrbition(glm::vec3(0.0f, +50.0f, 0.0f));
 		moonTrans.UpdateCenter(earth_model[3]);
 		glm::mat4 moon_model = moonTrans.GetModelMatrix();
 		moon_position = glm::vec3(moon_model[3]);
