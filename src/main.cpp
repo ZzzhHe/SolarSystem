@@ -168,7 +168,7 @@ int main(){
 	
 	Transform sunTrans(sun_position, 0.0f, 2.2f);
     Transform earthTrans(sun_position, 40.0f, 0.05f);
-    Transform moonTrans(earth_position, -2.0f, 0.06f);
+    Transform moonTrans(earth_position, -2.0f, 0.04f);
 	
 	// set all textures
     blurShader.Use();
@@ -381,7 +381,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 
 glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, float far) {
 	glm::mat4 lightProjection, lightView;
-	lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near, far);
+	lightProjection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, near, far);
 	lightView = glm::lookAt(position + lookat * 0.94f, lookat, glm::vec3(0.0, 1.0, 0.0));
 	return lightProjection * lightView;
 }
