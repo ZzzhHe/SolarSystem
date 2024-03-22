@@ -20,7 +20,6 @@ in vec2 TexCoords;
 
 uniform sampler2D hdrBuffer;
 uniform sampler2D pingpongBuffer;
-uniform sampler2D depthMap;
 uniform float exposure;
 
 void main()

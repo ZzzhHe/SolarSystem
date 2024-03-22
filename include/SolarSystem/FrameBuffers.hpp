@@ -84,6 +84,14 @@ class DepthMapFrameBuffer: public FrameBuffer {
 			glBindTexture(GL_TEXTURE_2D, depthMap);
 		}
 	
+		void CullFrontFace() {
+			GLCall(glCullFace(GL_FRONT));
+		}
+		
+		void CullBackFace() {
+			GLCall(glCullFace(GL_BACK));
+		}
+	
 	private:
 		GLuint depthMapFBO;
 		GLuint depthMap;

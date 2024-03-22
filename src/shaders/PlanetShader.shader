@@ -63,9 +63,10 @@ float ShadowCalculation(vec4 fragPosLightSpace);
 vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow);
 
 void main() {
-    vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
-    float shadow = ShadowCalculation(FragPosLightSpace);
+	float shadow = ShadowCalculation(FragPosLightSpace);
+	
+	vec3 norm = normalize(Normal);
+	vec3 viewDir = normalize(viewPos - FragPos);
     vec3 direct_light = CalcDirectLight(directLight, norm, viewDir, shadow);
     FragColor = vec4(direct_light, 1.0);
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
@@ -86,9 +87,27 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+	vec3 normal = normalize(Normal);
+	vec3 lightDir = normalize(-directLight.direction);
+	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+	
+//    float shadow = currentDepth - bias > closestDepth  ? 0.9 : 0.0;
 
-    return shadow;
+	float shadow = 0.0;
+	vec2 texelSize = 0.05 / textureSize(depthMap, 0);
+	for(int x = -1; x <= 8; ++x) {
+		for(int y = -1; y <= 8; ++y) {
+			float pcfDepth = texture(depthMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth  ? 0.9 : 0.0;
+		}
+	}
+	shadow /= 100.0;
+		
+	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+	if(projCoords.z > 1.0)
+		shadow = 0.0;
+			
+	return shadow;
 }
 
 vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow) {

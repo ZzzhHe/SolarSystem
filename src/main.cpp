@@ -43,7 +43,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 const unsigned int SHADOW_WIDTH = 1024;
-const unsigned int ShADOW_HEIGHT = 1024;
+const unsigned int SHADOW_HEIGHT = 1024;
 
 
 // timing
@@ -112,7 +112,7 @@ int main(){
     PingpongFrameBuffer pingpongFrameBuffer(SCR_WIDTH, SCR_HEIGHT);
 	
 	// Depth FrameBUffer for shadow
-	DepthMapFrameBuffer depthFrameBuffer(SHADOW_WIDTH, SHADOW_WIDTH);
+	DepthMapFrameBuffer depthFrameBuffer(SHADOW_WIDTH, SHADOW_HEIGHT);
 
 /*  -----   Shader  -----   */
     Shader planetShader("src/shaders/PlanetShader.shader");
@@ -155,11 +155,11 @@ int main(){
 /*  -----   -------   -----   */
 
     // Camera
-//	camera = Camera(glm::vec3(190.0f, 20.0f, 10.0f));
-    camera = Camera(glm::vec3(39.0f, 5.0f, 2.0f));
+	camera = Camera(glm::vec3(39.0f, 0.0f, 0.0f));
+//    camera = Camera(glm::vec3(39.0f, 5.0f, 2.0f));
 	
 	glm::vec3 earth_position = glm::vec3(40.0f, 0.0f, 0.0f);
-	glm::vec3 moon_position = glm::vec3(39.0f, 0.0f, 0.0f);
+	glm::vec3 moon_position = glm::vec3(38.0f, 0.0f, 0.0f);
 	
 	float sun_rotate_speed_factor = 0.001f;
 	float earth_rotate_speed_factor = 20.0f;
@@ -168,7 +168,7 @@ int main(){
 	
 	Transform sunTrans(sun_position, 0.0f, 2.2f);
     Transform earthTrans(sun_position, 40.0f, 0.05f);
-    Transform moonTrans(earth_position, -1.0f, 0.06f);
+    Transform moonTrans(earth_position, -2.0f, 0.06f);
 	
 	// set all textures
     blurShader.Use();
@@ -192,7 +192,6 @@ int main(){
 
         // input
         processInput(window, camera);
-		
 		float time = glfwGetTime();
 
         sunTrans.UpdateRotation(glm::vec3(0.0f, time * sun_rotate_speed_factor, 0.0f));
@@ -204,7 +203,7 @@ int main(){
 		earth_position = glm::vec3(earth_model[3]);
 		
 //      moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
-		// moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+//		 moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
 		moonTrans.UpdateCenter(earth_model[3]);
 		glm::mat4 moon_model = moonTrans.GetModelMatrix();
 		moon_position = glm::vec3(moon_model[3]);
@@ -214,17 +213,17 @@ int main(){
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
 		
-        glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 1.0f, 100.0f);
+        glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.1f, 10.0f);
 
         renderer.Clear();
         // Depth -> Shadow
-
+		GLCall(glViewport(0, 0, SHADOW_WIDTH * 2, SHADOW_HEIGHT * 2));
 		
-		GLCall(glViewport(0, 0, SHADOW_WIDTH, ShADOW_HEIGHT));
 		depthFrameBuffer.Bind();
+		depthFrameBuffer.CullFrontFace();
 		depthFrameBuffer.Clear();
+		
 			depthShader.Use();
-			
 			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 			depthShader.setMat4("model", earth_model);
 			earthModel.Render(&depthShader);
@@ -233,14 +232,15 @@ int main(){
 			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 			depthShader.setMat4("model", moon_model);
 			moonModel.Render(&depthShader);
-
+		depthFrameBuffer.CullBackFace();
 		depthFrameBuffer.Unbind();
+		
 		
 		depthFrameBuffer.ActiveTexture(3);
 		depthFrameBuffer.BindTexture();
 		
 		// HDR
-		GLCall(glViewport(0, 0, SCR_WIDTH*2, SCR_HEIGHT*2));
+		GLCall(glViewport(0, 0, SCR_WIDTH * 2, SCR_HEIGHT * 2));
 		hdrFrameBuffer.Bind();
         hdrFrameBuffer.Clear();
 
@@ -311,9 +311,9 @@ int main(){
         pingpongFrameBuffer.ActiveTexture(1);
         pingpongFrameBuffer.BindTexture(!horizontal);
 		
-        hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
-        hdrFrameBuffer.RenderBufferToScreen(&hdrShader);
-
+		hdrFrameBuffer.SetupShader(&hdrShader, 1.0f);
+		hdrFrameBuffer.RenderBufferToScreen(&hdrShader);
+		
         // poll IO events
         glfwPollEvents();
 
@@ -381,10 +381,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 
 glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, float far) {
 	glm::mat4 lightProjection, lightView;
-	glm::mat4 lightSpaceMatrix;
-	lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near, far);
-	lightView = glm::lookAt(position, lookat, glm::vec3(0.0, 1.0, 0.0));
-	lightSpaceMatrix = lightProjection * lightView;
-	
-	return lightSpaceMatrix;
+	lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near, far);
+	lightView = glm::lookAt(position + lookat * 0.94f, lookat, glm::vec3(0.0, 1.0, 0.0));
+	return lightProjection * lightView;
 }

@@ -40,6 +40,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FE30E1752BAB492A0048705A /* DebugShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = DebugShader.shader; sourceTree = "<group>"; };
 		FE47B4282BA76B4C00F4C779 /* SolarSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SolarSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE47B4362BA76C8000F4C779 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		FE47B4382BA76C9500F4C779 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../../../opt/homebrew/Cellar/glfw/3.4/lib; sourceTree = "<group>"; };
@@ -649,6 +650,7 @@
 				FE47B4442BA7734200F4C779 /* PlanetShader.shader */,
 				FE47B4452BA7734200F4C779 /* StarShader.shader */,
 				FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */,
+				FE30E1752BAB492A0048705A /* DebugShader.shader */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
