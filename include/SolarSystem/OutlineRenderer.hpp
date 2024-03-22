@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "GLDebug.hpp"
+#include "Model.hpp"
 
 
 class OutlineRenderer {

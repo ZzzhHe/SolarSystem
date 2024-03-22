@@ -19,6 +19,7 @@
 #include "PickingTexture.hpp"
 #include "FrameBuffers.hpp"
 #include "OtherMeshes.hpp"
+#include "SceneObject.hpp"
 
 /* include imgui
 #include "imgui/imgui.h"
@@ -140,38 +141,45 @@ int main(){
 
 
 /*          ****    ****    ****        */
-/*  ----- vertices indices textures --- */
+/*  ----- ----- --- model --- ----- --- */
 /*          ****    ****    ****        */
-
+	
+	glm::vec3 sun_position = glm::vec3(0.0f);
+	glm::vec3 earth_position = glm::vec3(40.0f, 0.0f, 0.0f);
+	glm::vec3 moon_position = glm::vec3(38.0f, 0.0f, 0.0f);
+	
+	float sun_scale = 2.2f;
+	float earth_scale = 0.05f;
+	float moon_scale = 0.04f;
+	
     // model
-    Model moonModel("res/models/moon/moon.obj");
-    Model earthModel("res/models/earth/earth.obj");
-    Model sunModel("res/models/sun/sun.obj");
-    
+	SceneObject Sun("res/models/sun/sun.obj", sun_position, sun_scale);
+	SceneObject Earth("res/models/earth/earth.obj", earth_position, earth_scale);
+	SceneObject Moon("res/models/moon/moon.obj", moon_position, moon_scale);
+	
+	// model transform - orbit
+	Sun.transform->UpdateOrbit(sun_position, 0.0f);
+	Earth.transform->UpdateOrbit(sun_position, earth_position.x);
+	Moon.transform->UpdateOrbit(earth_position, earth_position.x - moon_position.x);
+	
 /*  -----   define light uniform   -----   */
-    glm::vec3 sun_position = glm::vec3( 0.0f,  0.0f,  0.0f);
     glm::vec3 sun_color = glm::vec3(1.0f, 1.0f, 1.0f);
     DirectionalLight sunLight(sun_position, sun_color);
 
 /*  -----   -------   -----   */
-	CircleMesh circle(192);
+	
 
     // Camera
 	camera = Camera(glm::vec3(39.0f, 0.0f, 0.0f));
 //    camera = Camera(glm::vec3(39.0f, 5.0f, 2.0f));
 	
-	glm::vec3 earth_position = glm::vec3(40.0f, 0.0f, 0.0f);
-	glm::vec3 moon_position = glm::vec3(38.0f, 0.0f, 0.0f);
+
 	
 	float sun_rotate_speed_factor = 0.001f;
 	float earth_rotate_speed_factor = 20.0f;
 	float earth_orbit_speed_factor = 20 / 36.5f; // 1 / 365
 	float moon_rotate_orbit_speed_factor = 20 / 2.73f; // 1 / 27.3f
 	
-	Transform sunTrans(sun_position, 0.0f, 2.2f);
-    Transform earthTrans(sun_position, 40.0f, 0.05f);
-    Transform moonTrans(earth_position, -2.0f, 0.04f);
-	Transform circleTrans(sun_position, 40.0f, 1.0f);
 	
 	// set all textures
     blurShader.Use();
@@ -184,6 +192,8 @@ int main(){
 	planetShader.Use();
 	// diffuse 0, specular 1, emission 2
 	depthFrameBuffer.SetBufferToTexture(&planetShader, 3);
+	
+	CircleMesh circle(192);
 
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -196,29 +206,24 @@ int main(){
         // input
         processInput(window, camera);
 		float time = glfwGetTime();
+		
+		glm::mat4 view = camera.getViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
+		
+		glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.1f, 10.0f);
+		
 
-        sunTrans.UpdateRotation(glm::vec3(0.0f, time * sun_rotate_speed_factor, 0.0f));
-		glm::mat4 sun_model = sunTrans.GetModelMatrix();
+        Sun.transform->UpdateRotation(glm::vec3(0.0f, time * sun_rotate_speed_factor, 0.0f));
 		
-		earthTrans.UpdateRotation(glm::vec3(0.0f, -30.0f + time * earth_rotate_speed_factor, 23.5f));
-//		earthTrans.UpdateOrbition(glm::vec3(0.0f, time * earth_orbit_speed_factor, 0.0f));
-		glm::mat4 earth_model = earthTrans.GetModelMatrix();
-		earth_position = glm::vec3(earth_model[3]);
+		Earth.transform->UpdateRotation(glm::vec3(0.0f, -30.0f + time * earth_rotate_speed_factor, 23.5f));
+		Earth.transform->UpdateOrbition(glm::vec3(0.0f, time * earth_orbit_speed_factor, 0.0f));
+		earth_position = Earth.transform->GetPosition();
 		
-		moonTrans.UpdateRotation(glm::vec3(0.0f, - 90.0f + time *  moon_rotate_orbit_speed_factor, 0.0f));
-		moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, -5.0f));
-		moonTrans.UpdateCenter(earth_model[3]);
-		glm::mat4 moon_model = moonTrans.GetModelMatrix();
-		moon_position = glm::vec3(moon_model[3]);
-		
-//		camera.earthCameraTracking(earth_model[3]);
-		glm::mat4 circle_model = circleTrans.GetModelMatrix();
+		Moon.transform->UpdateRotation(glm::vec3(0.0f, - 90.0f + time *  moon_rotate_orbit_speed_factor, 0.0f));
+		Moon.transform->UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, -5.0f));
+		Moon.transform->UpdateOrbitCenter(earth_position);
+		moon_position = Moon.transform->GetPosition();
 								  
-        glm::mat4 view = camera.getViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
-		
-        glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.1f, 10.0f);
-
         renderer.Clear();
         // Depth -> Shadow
 		GLCall(glViewport(0, 0, SHADOW_WIDTH * 2, SHADOW_HEIGHT * 2));
@@ -229,13 +234,12 @@ int main(){
 		
 			depthShader.Use();
 			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
-			depthShader.setMat4("model", earth_model);
-			earthModel.Render(&depthShader);
+			Earth.Render(&depthShader);
 		
 			depthShader.Use();
 			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
-			depthShader.setMat4("model", moon_model);
-			moonModel.Render(&depthShader);
+			Moon.Render(&depthShader);
+		
 		depthFrameBuffer.CullBackFace();
 		depthFrameBuffer.Unbind();
 		
@@ -255,23 +259,12 @@ int main(){
             planetShader.Use();
 			planetShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 		
-            planetShader.setMat4("model", earth_model);
             planetShader.setMat4("projection", projection);
             planetShader.setMat4("view", view);
             planetShader.setVec3("viewPos", camera.Position);
             planetShader.UnUse();
 
-            earthModel.Render(&planetShader);
-		
-			circleShader.Use();
-		circle_model = glm::mat4(1.0f);
-		circle_model = glm::scale(circle_model, glm::vec3(40.0f, 0.0f, 40.0f));
-			circleShader.setMat4("model", circle_model);
-			circleShader.setMat4("projection", projection);
-			circleShader.setMat4("view", view);
-			circleShader.UnUse();
-		
-			circle.Render(&circleShader);
+            Earth.Render(&planetShader);
 		
 
             // the Moon
@@ -280,19 +273,27 @@ int main(){
 
             planetShader.Use();
 			planetShader.setMat4("lightSpaceMatrix", lightSpaceMat);
-            planetShader.setMat4("model", moon_model);
             planetShader.UnUse();
 
-            moonModel.Render(&planetShader);
+            Moon.Render(&planetShader);
 
             // the Sun
             starShader.Use();
-            starShader.setMat4("model", sun_model);
             starShader.setMat4("projection", projection);
             starShader.setMat4("view", view);
             starShader.UnUse();
 
-            sunModel.Render(&starShader);
+            Sun.Render(&starShader);
+		
+			circleShader.Use();
+			glm::mat4 circle_model = glm::mat4(1.0f);
+			circle_model = glm::scale(circle_model, glm::vec3(40.0f, 0.0f, 40.0f));
+			circleShader.setMat4("model", circle_model);
+			circleShader.setMat4("projection", projection);
+			circleShader.setMat4("view", view);
+			circleShader.UnUse();
+		
+			circle.Render(&circleShader);
 
         hdrFrameBuffer.Unbind();
 

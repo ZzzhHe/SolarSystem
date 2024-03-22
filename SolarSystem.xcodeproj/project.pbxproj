@@ -27,6 +27,7 @@
 		FE47B6702BA77A9400F4C779 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4602BA7734200F4C779 /* Texture.cpp */; };
 		FE47B6712BA77A9400F4C779 /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4632BA7734200F4C779 /* VertexArray.cpp */; };
 		FE47B6722BA77A9400F4C779 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4652BA7734200F4C779 /* VertexBuffer.cpp */; };
+		FEDC31032BAE2B9300FF426D /* SceneObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDC31012BAE2B9300FF426D /* SceneObject.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -595,6 +596,8 @@
 		FE47B6D42BA78C7600F4C779 /* index */ = {isa = PBXFileReference; lastKnownFileType = file; path = index; sourceTree = "<group>"; };
 		FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = DepthShader.shader; sourceTree = "<group>"; };
 		FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		FEBE65482BAE4B7700572301 /* SceneObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SceneObject.hpp; sourceTree = "<group>"; };
+		FEDC31012BAE2B9300FF426D /* SceneObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneObject.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -677,6 +680,7 @@
 				FE47B44B2BA7734200F4C779 /* FrameBuffers.cpp */,
 				FE1FF8062BADE686006E1E3C /* OtherMeshes.cpp */,
 				FE47B44D2BA7734200F4C779 /* glad.c */,
+				FEDC31012BAE2B9300FF426D /* SceneObject.cpp */,
 				FE47B44E2BA7734200F4C779 /* GLDebug.cpp */,
 				FE47B4502BA7734200F4C779 /* IndexBuffer.cpp */,
 				FE47B4532BA7734200F4C779 /* main.cpp */,
@@ -1305,6 +1309,7 @@
 				FE47B4642BA7734200F4C779 /* VertexArray.hpp */,
 				FE47B4662BA7734200F4C779 /* VertexBuffer.hpp */,
 				FE47B4672BA7734200F4C779 /* VertexBufferLayout.hpp */,
+				FEBE65482BAE4B7700572301 /* SceneObject.hpp */,
 				FE1FF8052BADE61D006E1E3C /* OtherMeshes.hpp */,
 			);
 			path = SolarSystem;
@@ -1756,6 +1761,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE47B6432BA7738500F4C779 /* main.cpp in Sources */,
+				FEDC31032BAE2B9300FF426D /* SceneObject.cpp in Sources */,
 				FE47B6672BA77A9400F4C779 /* glad.c in Sources */,
 				FE47B66F2BA77A9400F4C779 /* stb_image.cpp in Sources */,
 				FE47B6682BA77A9400F4C779 /* GLDebug.cpp in Sources */,
