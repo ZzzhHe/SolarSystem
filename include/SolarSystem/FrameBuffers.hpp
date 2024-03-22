@@ -97,7 +97,3 @@ class DepthMapFrameBuffer: public FrameBuffer {
 		GLuint depthMap;
 };
 
-class FullScreenQuadMesh : public Mesh {
-    public:
-        FullScreenQuadMesh(std::vector<float> vertices, std::vector<unsigned int> indices);
-};  

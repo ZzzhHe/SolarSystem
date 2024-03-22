@@ -18,6 +18,7 @@
 #include "OutlineRenderer.hpp"
 #include "PickingTexture.hpp"
 #include "FrameBuffers.hpp"
+#include "OtherMeshes.hpp"
 
 /* include imgui
 #include "imgui/imgui.h"
@@ -40,7 +41,7 @@ glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, 
 
 // settings
 const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_HEIGHT = 800;
 
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
@@ -120,6 +121,7 @@ int main(){
     Shader hdrShader("src/shaders/HDRShader.shader");
     Shader blurShader("src/shaders/BlurShader.shader");
 	Shader depthShader("src/shaders/DepthShader.shader");
+	Shader circleShader("src/shaders/CircleShader.shader");
 /*  -----   -----  -----   */
 
 	/* Setup Dear ImGui context
@@ -151,8 +153,8 @@ int main(){
     glm::vec3 sun_color = glm::vec3(1.0f, 1.0f, 1.0f);
     DirectionalLight sunLight(sun_position, sun_color);
 
-
 /*  -----   -------   -----   */
+	CircleMesh circle(192);
 
     // Camera
 	camera = Camera(glm::vec3(39.0f, 0.0f, 0.0f));
@@ -169,6 +171,7 @@ int main(){
 	Transform sunTrans(sun_position, 0.0f, 2.2f);
     Transform earthTrans(sun_position, 40.0f, 0.05f);
     Transform moonTrans(earth_position, -2.0f, 0.04f);
+	Transform circleTrans(sun_position, 40.0f, 1.0f);
 	
 	// set all textures
     blurShader.Use();
@@ -202,13 +205,14 @@ int main(){
 		glm::mat4 earth_model = earthTrans.GetModelMatrix();
 		earth_position = glm::vec3(earth_model[3]);
 		
-//      moonTrans.UpdateRotation(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
-//		 moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, 0.0f));
+		moonTrans.UpdateRotation(glm::vec3(0.0f, - 90.0f + time *  moon_rotate_orbit_speed_factor, 0.0f));
+		moonTrans.UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, -5.0f));
 		moonTrans.UpdateCenter(earth_model[3]);
 		glm::mat4 moon_model = moonTrans.GetModelMatrix();
 		moon_position = glm::vec3(moon_model[3]);
 		
 //		camera.earthCameraTracking(earth_model[3]);
+		glm::mat4 circle_model = circleTrans.GetModelMatrix();
 								  
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
@@ -258,6 +262,17 @@ int main(){
             planetShader.UnUse();
 
             earthModel.Render(&planetShader);
+		
+			circleShader.Use();
+		circle_model = glm::mat4(1.0f);
+		circle_model = glm::scale(circle_model, glm::vec3(40.0f, 0.0f, 40.0f));
+			circleShader.setMat4("model", circle_model);
+			circleShader.setMat4("projection", projection);
+			circleShader.setMat4("view", view);
+			circleShader.UnUse();
+		
+			circle.Render(&circleShader);
+		
 
             // the Moon
             sunLight.updatgeTarget(moon_position);

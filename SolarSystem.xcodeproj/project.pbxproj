@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE1FF8082BADE686006E1E3C /* OtherMeshes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1FF8062BADE686006E1E3C /* OtherMeshes.cpp */; };
+		FE1FF8102BAE0D71006E1E3C /* CircleShader.shader in Sources */ = {isa = PBXBuildFile; fileRef = FE1FF80F2BAE0D71006E1E3C /* CircleShader.shader */; };
 		FE47B4372BA76C8000F4C779 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE47B4362BA76C8000F4C779 /* OpenGL.framework */; };
 		FE47B43B2BA76CDB00F4C779 /* libglfw.3.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FE47B43A2BA76CDB00F4C779 /* libglfw.3.4.dylib */; };
 		FE47B6432BA7738500F4C779 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4532BA7734200F4C779 /* main.cpp */; };
@@ -40,6 +42,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FE1FF8052BADE61D006E1E3C /* OtherMeshes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OtherMeshes.hpp; sourceTree = "<group>"; };
+		FE1FF8062BADE686006E1E3C /* OtherMeshes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OtherMeshes.cpp; sourceTree = "<group>"; };
+		FE1FF80F2BAE0D71006E1E3C /* CircleShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = CircleShader.shader; sourceTree = "<group>"; };
 		FE30E1752BAB492A0048705A /* DebugShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = DebugShader.shader; sourceTree = "<group>"; };
 		FE47B4282BA76B4C00F4C779 /* SolarSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SolarSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE47B4362BA76C8000F4C779 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -651,6 +656,7 @@
 				FE47B4452BA7734200F4C779 /* StarShader.shader */,
 				FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */,
 				FE30E1752BAB492A0048705A /* DebugShader.shader */,
+				FE1FF80F2BAE0D71006E1E3C /* CircleShader.shader */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -669,6 +675,7 @@
 				FE47B4462BA7734200F4C779 /* shaders */,
 				FE47B4492BA7734200F4C779 /* Camera.cpp */,
 				FE47B44B2BA7734200F4C779 /* FrameBuffers.cpp */,
+				FE1FF8062BADE686006E1E3C /* OtherMeshes.cpp */,
 				FE47B44D2BA7734200F4C779 /* glad.c */,
 				FE47B44E2BA7734200F4C779 /* GLDebug.cpp */,
 				FE47B4502BA7734200F4C779 /* IndexBuffer.cpp */,
@@ -1298,6 +1305,7 @@
 				FE47B4642BA7734200F4C779 /* VertexArray.hpp */,
 				FE47B4662BA7734200F4C779 /* VertexBuffer.hpp */,
 				FE47B4672BA7734200F4C779 /* VertexBufferLayout.hpp */,
+				FE1FF8052BADE61D006E1E3C /* OtherMeshes.hpp */,
 			);
 			path = SolarSystem;
 			sourceTree = "<group>";
@@ -1754,9 +1762,11 @@
 				FE47B6652BA77A9400F4C779 /* Camera.cpp in Sources */,
 				FE47B6662BA77A9400F4C779 /* FrameBuffers.cpp in Sources */,
 				FE47B6692BA77A9400F4C779 /* IndexBuffer.cpp in Sources */,
+				FE1FF8082BADE686006E1E3C /* OtherMeshes.cpp in Sources */,
 				FE47B66A2BA77A9400F4C779 /* Mesh.cpp in Sources */,
 				FE47B66B2BA77A9400F4C779 /* Model.cpp in Sources */,
 				FE47B66C2BA77A9400F4C779 /* PickingTexture.cpp in Sources */,
+				FE1FF8102BAE0D71006E1E3C /* CircleShader.shader in Sources */,
 				FE47B66D2BA77A9400F4C779 /* Renderer.cpp in Sources */,
 				FE47B66E2BA77A9400F4C779 /* Shader.cpp in Sources */,
 				FE47B6702BA77A9400F4C779 /* Texture.cpp in Sources */,

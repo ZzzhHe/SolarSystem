@@ -1,21 +1,8 @@
 #include "FrameBuffers.hpp"
 #include "GLDebug.hpp"
+#include "OtherMeshes.hpp"
 
 #include <iostream>
-
-FullScreenQuadMesh::FullScreenQuadMesh(std::vector<float> vertices, std::vector<unsigned int> indices) {
-    this->m_VAO = new VertexArray();
-
-    this->m_VBO = new VertexBuffer(&vertices[0], vertices.size() * sizeof(float));
-    
-    this->m_IBO = new IndexBuffer(&indices[0], indices.size());
-
-    VertexBufferLayout layout;
-    layout.Push<float>(3); // Position
-    layout.Push<float>(2); // TexCoords
-
-    this->m_VAO->AddBuffer(*this->m_VBO, layout);
-}
 
 void FrameBuffer::RenderBufferToScreen(Shader* shader) {
     std::vector<float> quadVertices = {
