@@ -7,7 +7,7 @@ public:
 	Transform(glm::vec3 position, float scale)
 	: m_position(position), m_scale(scale) {}
 	
-	glm::mat4 GetModelMatrix() const;
+	glm::mat4 GetModelMatrix();
 	
 	void UpdateOrbit(glm::vec3 center, float radius);
 	
