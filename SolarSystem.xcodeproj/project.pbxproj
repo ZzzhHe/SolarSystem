@@ -27,6 +27,7 @@
 		FE47B6702BA77A9400F4C779 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4602BA7734200F4C779 /* Texture.cpp */; };
 		FE47B6712BA77A9400F4C779 /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4632BA7734200F4C779 /* VertexArray.cpp */; };
 		FE47B6722BA77A9400F4C779 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE47B4652BA7734200F4C779 /* VertexBuffer.cpp */; };
+		FEBE654A2BAE51B800572301 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEBE65492BAE51B800572301 /* Transform.cpp */; };
 		FEDC31032BAE2B9300FF426D /* SceneObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDC31012BAE2B9300FF426D /* SceneObject.cpp */; };
 /* End PBXBuildFile section */
 
@@ -597,6 +598,7 @@
 		FE4AA3C02BAA41B0008E3FBE /* DepthShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = DepthShader.shader; sourceTree = "<group>"; };
 		FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		FEBE65482BAE4B7700572301 /* SceneObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SceneObject.hpp; sourceTree = "<group>"; };
+		FEBE65492BAE51B800572301 /* Transform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
 		FEDC31012BAE2B9300FF426D /* SceneObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneObject.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -679,6 +681,7 @@
 				FE47B4492BA7734200F4C779 /* Camera.cpp */,
 				FE47B44B2BA7734200F4C779 /* FrameBuffers.cpp */,
 				FE1FF8062BADE686006E1E3C /* OtherMeshes.cpp */,
+				FEBE65492BAE51B800572301 /* Transform.cpp */,
 				FE47B44D2BA7734200F4C779 /* glad.c */,
 				FEDC31012BAE2B9300FF426D /* SceneObject.cpp */,
 				FE47B44E2BA7734200F4C779 /* GLDebug.cpp */,
@@ -1768,6 +1771,7 @@
 				FE47B6652BA77A9400F4C779 /* Camera.cpp in Sources */,
 				FE47B6662BA77A9400F4C779 /* FrameBuffers.cpp in Sources */,
 				FE47B6692BA77A9400F4C779 /* IndexBuffer.cpp in Sources */,
+				FEBE654A2BAE51B800572301 /* Transform.cpp in Sources */,
 				FE1FF8082BADE686006E1E3C /* OtherMeshes.cpp in Sources */,
 				FE47B66A2BA77A9400F4C779 /* Mesh.cpp in Sources */,
 				FE47B66B2BA77A9400F4C779 /* Model.cpp in Sources */,
