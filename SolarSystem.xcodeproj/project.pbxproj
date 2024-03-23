@@ -599,6 +599,7 @@
 		FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		FEBE65482BAE4B7700572301 /* SceneObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SceneObject.hpp; sourceTree = "<group>"; };
 		FEBE65492BAE51B800572301 /* Transform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
+		FEBE654B2BAE612000572301 /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2.png; sourceTree = "<group>"; };
 		FEDC31012BAE2B9300FF426D /* SceneObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneObject.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1287,6 +1288,7 @@
 		FE47B6602BA7740200F4C779 /* assets */ = {
 			isa = PBXGroup;
 			children = (
+				FEBE654B2BAE612000572301 /* 2.png */,
 				FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */,
 			);
 			path = assets;
