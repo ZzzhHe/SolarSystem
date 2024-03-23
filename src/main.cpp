@@ -208,25 +208,32 @@ int main(){
 
         // input
         processInput(window, camera);
-		float time = glfwGetTime();
 		
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
 		glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.1f, 10.0f);
 
 		/* --- Transform --- */
-        Sun.transform->UpdateRotation(glm::vec3(0.0f, time * sun_rotate_speed_factor, 0.0f));
+		float time = glfwGetTime();
+		float sun_rotate_degree = time * sun_rotate_speed_factor;
+		float earth_rotate_degree = -30.0f + time * earth_rotate_speed_factor;
+		float earth_orbit_degree = time * earth_orbit_speed_factor;
+		float moon_rotate_degree = -90.0f + time *  moon_rotate_orbit_speed_factor;
+		float moon_orbit_degree = time *  moon_rotate_orbit_speed_factor;
+		float moon_orbit_incline_degree = std::abs(5.0f * glm::sin(glm::radians(moon_orbit_degree)));
 		
-		Earth.transform->UpdateRotation(glm::vec3(0.0f, -30.0f + time * earth_rotate_speed_factor, 23.5f));
-		Earth.transform->UpdateOrbition(glm::vec3(0.0f, time * earth_orbit_speed_factor, 0.0f));
+        Sun.transform->UpdateRotation(glm::vec3(0.0f, sun_rotate_degree, 0.0f));
+		
+		Earth.transform->UpdateRotation(glm::vec3(0.0f, earth_rotate_degree, 23.5f));
+		Earth.transform->UpdateOrbition(glm::vec3(0.0f, earth_orbit_degree, 0.0f));
 		earth_position = Earth.transform->GetPosition();
 		
-		Moon.transform->UpdateRotation(glm::vec3(0.0f, - 90.0f + time *  moon_rotate_orbit_speed_factor, 0.0f));
-		Moon.transform->UpdateOrbition(glm::vec3(0.0f, time *  moon_rotate_orbit_speed_factor, -5.0f));
+		Moon.transform->UpdateRotation(glm::vec3(0.0f, moon_rotate_degree, 0.0f));
+		Moon.transform->UpdateOrbition(glm::vec3(moon_orbit_incline_degree, moon_orbit_degree, 0.0f));
 		Moon.transform->UpdateOrbitCenter(earth_position);
 		moon_position = Moon.transform->GetPosition();
 		
-		CircleMoon.transform->UpdateOrbition(glm::vec3(0.0f, 0.0f, -5.0f));
+		CircleMoon.transform->UpdateOrbition(glm::vec3(5.0f, 0.0f, 0.0f));
 		CircleMoon.transform->UpdateOrbitCenter(earth_position);
 		/* --- --- --- */
 								  
