@@ -16,6 +16,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     layout.Push<float>(3); // Position
     layout.Push<float>(2); // TexCoords
     layout.Push<float>(3); // Normal
+	layout.Push<float>(3); // Tangent
 
     this->m_VAO->AddBuffer(*this->m_VBO, layout);
 }
