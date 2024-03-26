@@ -169,6 +169,7 @@ int main(){
 	
 	// set cloud transform according to earth transform
 	EarthCloud.transform = Earth.transform->clone();
+	EarthCloud.transform->UpdateScale(earth_scale + earth_scale * 0.01f);
 	
 	// Circle to represent orbit
 	Circle CircleEarth(192, glm::vec3(0.0f), earth_radius);
@@ -219,7 +220,7 @@ int main(){
 		glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.1f, 10.0f);
 
 		/* --- Transform --- */
-		float time = glfwGetTime();
+		float time = glfwGetTime() * 0.1f;
 		float sun_rotate_degree = time * sun_rotate_speed_factor;
 		float earth_rotate_degree = -30.0f + time * earth_rotate_speed_factor;
 		float earth_orbit_degree = time * earth_orbit_speed_factor;
@@ -257,9 +258,7 @@ int main(){
 			depthShader.Use();
 			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 			Earth.Render(&depthShader);
-		
-			depthShader.Use();
-			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
+			EarthCloud.Render(&depthShader);
 			Moon.Render(&depthShader);
 		
 		depthFrameBuffer.CullBackFace();
@@ -288,7 +287,7 @@ int main(){
             planetShader.UnUse();
 
             Earth.Render(&planetShader);
-		EarthCloud.Render(&planetShader);
+			EarthCloud.Render(&planetShader);
 		
 
             // the Moon
