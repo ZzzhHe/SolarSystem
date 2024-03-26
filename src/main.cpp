@@ -150,20 +150,25 @@ int main(){
 	
 	// rotate factors
 	float sun_rotate_speed_factor = 0.001f;
-	float earth_rotate_speed_factor = 20.0f;
+	float earth_rotate_speed_factor = 5.0f;
 	float earth_orbit_speed_factor = 20 / 36.5f; // 1 / 365
 	float moon_rotate_orbit_speed_factor = 20 / 2.73f; // 1 / 27.3f
+	float earth_cloud_rotate_speed_factor = 6.0f;
 	
 	
     // model
 	SceneObject Sun("res/models/sun/sun.obj", sun_position, sun_scale);
 	SceneObject Earth("res/models/earth/earth.obj", earth_position, earth_scale);
 	SceneObject Moon("res/models/moon/moon.obj", moon_position, moon_scale);
+	SceneObject EarthCloud("res/models/earth/earth_cloud.obj", earth_position, earth_scale);
 	
 	// model transform - orbit
 	Sun.transform->UpdateOrbit(sun_position, 0.0f);
 	Earth.transform->UpdateOrbit(sun_position, earth_radius);
 	Moon.transform->UpdateOrbit(earth_position, moon_radius);
+	
+	// set cloud transform according to earth transform
+	EarthCloud.transform = Earth.transform->clone();
 	
 	// Circle to represent orbit
 	Circle CircleEarth(192, glm::vec3(0.0f), earth_radius);
@@ -221,12 +226,16 @@ int main(){
 		float moon_rotate_degree = -90.0f + time *  moon_rotate_orbit_speed_factor;
 		float moon_orbit_degree = time *  moon_rotate_orbit_speed_factor;
 		float moon_orbit_incline_degree = std::abs(5.0f * glm::sin(glm::radians(moon_orbit_degree)));
+		float earth_cloud_rotate_degree = time * earth_cloud_rotate_speed_factor;
 		
         Sun.transform->UpdateRotation(glm::vec3(0.0f, sun_rotate_degree, 0.0f));
 		
 		Earth.transform->UpdateRotation(glm::vec3(0.0f, earth_rotate_degree, 23.5f));
 		Earth.transform->UpdateOrbition(glm::vec3(0.0f, earth_orbit_degree, 0.0f));
 		earth_position = Earth.transform->GetPosition();
+		
+		EarthCloud.transform = Earth.transform->clone();
+		EarthCloud.transform->UpdateRotation(glm::vec3(0.0f, -earth_cloud_rotate_degree, 23.5f));
 		
 		Moon.transform->UpdateRotation(glm::vec3(0.0f, moon_rotate_degree, 0.0f));
 		Moon.transform->UpdateOrbition(glm::vec3(moon_orbit_incline_degree, moon_orbit_degree, 0.0f));
@@ -279,6 +288,7 @@ int main(){
             planetShader.UnUse();
 
             Earth.Render(&planetShader);
+		EarthCloud.Render(&planetShader);
 		
 
             // the Moon

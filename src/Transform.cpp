@@ -35,7 +35,14 @@ void Transform::UpdateOrbitCenter(glm::vec3 center) {
 	m_orbit_center = center;
 }
 
+void Transform::UpdateScale(float scale) {
+	m_scale = scale;
+}
+
 glm::vec3 Transform::GetPosition() const{
 	return m_position;
 }
 
+std::unique_ptr<Transform> Transform::clone() const {
+	return std::make_unique<Transform>(*this);
+}

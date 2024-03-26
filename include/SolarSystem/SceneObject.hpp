@@ -10,10 +10,10 @@ public:
 	
 	void Render(Shader* shader);
 	
-	std::shared_ptr<Transform> transform;
+	std::unique_ptr<Transform> transform;
 	
 private:
-	std::shared_ptr<Model> model;
+	std::unique_ptr<Model> model;
 };
 
 class Circle {
@@ -23,8 +23,8 @@ public:
 	
 	void Render(Shader * shader);
 	
-	std::shared_ptr<Transform> transform;
+	std::unique_ptr<Transform> transform;
 	
 private:
-	std::shared_ptr<Mesh> mesh;
+	std::unique_ptr<Mesh> mesh;
 };

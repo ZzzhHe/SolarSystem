@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory>
 
 class Transform {
 public:
@@ -17,7 +18,11 @@ public:
 	
 	void UpdateOrbitCenter(glm::vec3 center);
 	
+	void UpdateScale(float scale);
+	
 	glm::vec3 GetPosition() const;
+	
+	std::unique_ptr<Transform> clone() const;
 	
 private:
 	glm::vec3 m_position;

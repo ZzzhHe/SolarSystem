@@ -60,15 +60,15 @@ uniform Material material;
 uniform sampler2D depthMap;
 
 float ShadowCalculation(vec4 fragPosLightSpace);
-vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow);
+vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow);
 
 void main() {
 	float shadow = ShadowCalculation(FragPosLightSpace);
 	
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 direct_light = CalcDirectLight(directLight, norm, viewDir, shadow);
-    FragColor = vec4(direct_light, 1.0);
+    vec4 direct_light = CalcDirectLight(directLight, norm, viewDir, shadow);
+	FragColor = direct_light;
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 0.9) {
         BrightColor = vec4(FragColor.rgb, 1.0);
@@ -110,50 +110,57 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
 	return shadow;
 }
 
-vec3 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow) {
-    vec3 lightDirection = normalize(-light.direction);
-
-    // ambient
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    
-    // diffuse 
-    float diff = max(dot(normal, lightDirection), 0.0);
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-    
-    // specular
-    vec3 halfwayDir = normalize(lightDirection + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0f);
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-
-    // twilight zone
-    float emit = 1.0f;
-    if (diff > 0.4f) {
-        emit = 0.0f;
-    } else if (diff > 0.375f) {
-        emit = 0.05f;
-    }  else if (diff > 0.35f) {
-        emit = 0.1f;
-    } else if (diff > 0.325f) {
-        emit = 0.15f;
-    } else if (diff > 0.3f) {
-        emit = 0.2f;
-    } else if (diff > 0.2f) {
-        emit = 0.4f;
-    } else if (diff > 0.15f) {
-        emit = 0.55f;
-    } else if (diff > 0.125f) {
-        emit = 0.7f;
-    } else if (diff > 0.1f) {
-        emit = 0.8f;
-    } else if (diff > 0.075f) {
-        emit = 0.85f;
-    } else if (diff > 0.05f) {
-        emit = 0.9f;
-    } else if (diff > 0.025f) {
-        emit = 0.95f;
-    }
-    
-    vec3 emission = texture(material.emission, TexCoords).rgb * emit;
-
-    return (ambient + (1.0f - shadow) * (diffuse + specular) + emission) * light.intensity;
+vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow) {
+	vec4 diffuseColor = texture(material.diffuse, TexCoords);
+	vec4 specularColor = texture(material.specular, TexCoords);
+	vec4 emissionColor = texture(material.emission, TexCoords);
+	float alpha = diffuseColor.a;
+	
+	vec3 lightDirection = normalize(-light.direction);
+	
+	// ambient
+	vec3 ambient = light.ambient * vec3(diffuseColor);
+	
+	// diffuse
+	float diff = max(dot(normal, lightDirection), 0.0);
+	vec3 diffuse = light.diffuse * diff * vec3(diffuseColor);
+	
+	// specular
+	vec3 halfwayDir = normalize(lightDirection + viewDir);
+	float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0f);
+	vec3 specular = light.specular * spec * vec3(specularColor);
+	
+	// twilight zone
+	float emit = 1.0f;
+	if (diff > 0.4f) {
+		emit = 0.0f;
+	} else if (diff > 0.375f) {
+		emit = 0.05f;
+	}  else if (diff > 0.35f) {
+		emit = 0.1f;
+	} else if (diff > 0.325f) {
+		emit = 0.15f;
+	} else if (diff > 0.3f) {
+		emit = 0.2f;
+	} else if (diff > 0.2f) {
+		emit = 0.4f;
+	} else if (diff > 0.15f) {
+		emit = 0.55f;
+	} else if (diff > 0.125f) {
+		emit = 0.7f;
+	} else if (diff > 0.1f) {
+		emit = 0.8f;
+	} else if (diff > 0.075f) {
+		emit = 0.85f;
+	} else if (diff > 0.05f) {
+		emit = 0.9f;
+	} else if (diff > 0.025f) {
+		emit = 0.95f;
+	}
+	
+	vec3 emission = emissionColor.rgb * emit;
+	
+	vec3 color = (ambient + (1.0f - shadow) * (diffuse + specular) + emission) * light.intensity;
+		
+	return vec4(color, alpha);
 }

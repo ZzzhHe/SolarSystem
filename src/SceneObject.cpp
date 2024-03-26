@@ -4,8 +4,8 @@
 SceneObject::SceneObject(const char *path,
 						 glm::vec3 position,
 						 float scale) {
-	model = std::make_shared<Model>(path);
-	transform = std::make_shared<Transform>(position, scale);
+	model = std::make_unique<Model>(path);
+	transform = std::make_unique<Transform>(position, scale);
 }
 
 void SceneObject::Render(Shader * shader) {
@@ -20,9 +20,8 @@ Circle::Circle(const unsigned int pts,
 			   glm::vec3 position,
 			   float scale) {
 	
-	mesh = std::make_shared<CircleMesh>(pts);
-	
-	transform = std::make_shared<Transform>(position, scale);
+	mesh = std::make_unique<CircleMesh>(pts);
+	transform = std::make_unique<Transform>(position, scale);
 }
 
 void Circle::Render(Shader * shader) {
