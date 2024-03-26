@@ -40,6 +40,9 @@ void Mesh::Render(Shader* shader) {
             case TextureType::EMISSION:
                 shader->setInt("material.emission", i);
                 break;
+			case TextureType::NORMAL:
+				shader->setInt("material.normal", i);
+				break;
         }
     }
     

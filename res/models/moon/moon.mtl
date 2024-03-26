@@ -11,3 +11,4 @@ illum 1
 map_Kd albedo.jpg
 map_Ks dummy.jpg
 map_Ke dummy.jpg
+norm normal.jpg
