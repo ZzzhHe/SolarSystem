@@ -1,4 +1,5 @@
 #include "Particle.hpp"
+#include <iostream>
 
 float randomFloat(float min, float max) {
 	return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(max-min)));
@@ -22,7 +23,7 @@ float Particle::GetScale() {
 
 bool Particle::Update(float delta) { // per frame
 	// attenuation
-	m_velocity *= 0.5;
+	m_velocity *= 0.98;
 	m_scale *= 0.99;
 	m_position += m_velocity * delta;
 	m_color.a -= delta * 0.1f;
@@ -48,6 +49,7 @@ ParticleManager::ParticleManager(unsigned int amount, glm::vec3 pos, float r, co
 }
 
 void ParticleManager::Render(Shader* shader) {
+//	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
 	GLCall(glDepthMask(GL_FALSE));
 	glm::vec3 pos;
 	glm::vec4 color;
@@ -64,13 +66,20 @@ void ParticleManager::Render(Shader* shader) {
 	}
 	shader->UnUse();
 	GLCall(glDepthMask(GL_TRUE));
+//	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
 
 void ParticleManager::Update(float delta) {
-	for (int i = 0; i < m_amount / 100 && m_particles.size() < m_amount; ++ i) {
-		m_particles.push_back(RespawnParticle());
+	m_flarePeriod -= delta;
+	if (m_flarePeriod < 0) {
+		// time to the sun flare!
+		float theta_center = randomFloat(0.0f, 2 * M_PI);
+		float phi_center = randomFloat(0.0f, M_PI);
+		for (int i = 0; i < PARTICLE_PER_FRAME && m_particles.size() < m_amount; ++ i) {
+			m_particles.push_back(RespawnParticle(theta_center, phi_center));
+		}
+		m_flarePeriod = FLARE_PERIOD;
 	}
-	
 	for (int i = 0; i < m_particles.size(); ++ i) {
 		bool stillAlive = m_particles[i].Update(delta);
 		if (!stillAlive) {
@@ -81,21 +90,28 @@ void ParticleManager::Update(float delta) {
 	}
 }
 
-Particle ParticleManager::RespawnParticle() {
+Particle ParticleManager::RespawnParticle(float theta_center, float phi_center) {
 	// Generate a random direction
-	float theta = randomFloat(0.0f, 2.0f * M_PI); // Random angle around Y axis [0, 2PI]
-	float phi = randomFloat(0.0f, M_PI); // Random angle from Y axis [0, PI]
+	float theta_variance = theta_center * 0.02f; // Increase the variance
+	float phi_variance = phi_center * 0.02f;
+	float theta = randomFloat(theta_center - theta_variance, theta_center + theta_variance);
+	float phi = randomFloat(phi_center - phi_variance, phi_center + phi_variance);
+	
 	// Convert spherical coordinates to Cartesian coordinates for the direction
 	glm::vec3 direction = glm::vec3(sin(phi) * cos(theta), cos(phi), sin(phi) * sin(theta));
-	glm::vec3 p = m_center + direction * m_raduis;
+	glm::vec3 random_offset = direction * randomFloat(0.0f, m_raduis * 0.05f);
+	glm::vec3 p = m_center + direction * m_raduis + random_offset;
 	
-	float magnitude = randomFloat(0.01f, 0.05f);
+	float magnitude = randomFloat(0.2f, 1.0f);
 	glm::vec3 v = direction * magnitude;
+	v += glm::cross(direction, glm::vec3(0, 1, 0)) * randomFloat(-0.05f, 0.05f);
 	
 	float rColor = randomFloat(0.5f, 1.0f);
 	glm::vec4 color = glm::vec4(rColor, rColor, rColor, 1.0f);
 	
 	float life = randomFloat(20.0f, 80.0f);
+	
+	float scale = randomFloat(1.0f, 5.0f);
 
-	return Particle(p, v, color, life);
+	return Particle(p, v, color, life, scale);
 }

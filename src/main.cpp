@@ -40,6 +40,9 @@ const unsigned int SCR_HEIGHT = 800;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
 
+const int CIRCLE_PTS = 192;
+const int PARTICLE_NUM = 10000;
+
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -174,8 +177,8 @@ int main(){
 	EarthCloud.transform->UpdateScale(earth_scale + earth_scale * 0.01f);
 	
 	// Circle to represent orbit
-	Circle CircleEarth(192, glm::vec3(0.0f), earth_radius);
-	Circle CircleMoon(192, earth_position, moon_radius);
+	Circle CircleEarth(CIRCLE_PTS, glm::vec3(0.0f), earth_radius);
+	Circle CircleMoon(CIRCLE_PTS, earth_position, moon_radius);
 	
 	CircleEarth.transform->UpdateOrbit(sun_position, 0.0f);
 	CircleMoon.transform->UpdateOrbit(earth_position, 0.0f);
@@ -205,7 +208,7 @@ int main(){
 	depthFrameBuffer.SetBufferToTexture(&planetShader, 3);
 	/* --- --- --- */
 	
-	ParticleManager sunParticle(10000, sun_position, 22.5f, "res/sprite/sun_sprite.png");
+	ParticleManager sunParticle(PARTICLE_NUM, sun_position, 22.0f, "res/sprite/sun_sprite1.png");
 	
 	
 /*          ****    ****    ****        */

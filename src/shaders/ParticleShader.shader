@@ -34,7 +34,7 @@ in vec4 ParticleColor;
 uniform sampler2D sprite;
 
 void main() {
-	FragColor = 2.0f * texture(sprite, TexCoords) * ParticleColor;
+	FragColor = 1.5f * texture(sprite, TexCoords) * ParticleColor;
 	if (FragColor.a < 0.05) {
 		discard;
 	}
