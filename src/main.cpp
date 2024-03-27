@@ -12,6 +12,7 @@
 #include "FrameBuffers.hpp"
 #include "OtherMeshes.hpp"
 #include "SceneObject.hpp"
+#include "Particle.hpp"
 
 /* include imgui
 #include "imgui/imgui.h"
@@ -115,6 +116,7 @@ int main(){
     Shader blurShader("src/shaders/BlurShader.shader");
 	Shader depthShader("src/shaders/DepthShader.shader");
 	Shader circleShader("src/shaders/CircleShader.shader");
+	Shader particleShader("src/shaders/ParticleShader.shader");
 /*  -----   -----  -----   */
 
 	/* Setup Dear ImGui context
@@ -203,6 +205,8 @@ int main(){
 	depthFrameBuffer.SetBufferToTexture(&planetShader, 3);
 	/* --- --- --- */
 	
+	ParticleManager sunParticle(10000, sun_position, 22.5f, "res/sprite/sun_sprite.png");
+	
 	
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -211,6 +215,8 @@ int main(){
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+		
+		sunParticle.Update(deltaTime);
 
         // input
         processInput(window, camera);
@@ -307,6 +313,14 @@ int main(){
             starShader.UnUse();
 
             Sun.Render(&starShader);
+		
+			// the Sun Particle
+			particleShader.Use();
+			particleShader.setMat4("projection", projection);
+			particleShader.setMat4("view", view);
+			particleShader.setVec3("cameraUp", camera.Up);
+			particleShader.setVec3("cameraRight", camera.Right);
+			sunParticle.Render(&particleShader);
 		
 			// circle
 			circleShader.Use();
