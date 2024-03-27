@@ -4,7 +4,7 @@
 #include "Camera.hpp"
 
 const int PARTICLE_PER_FRAME = 500;
-const float FLARE_PERIOD = 0.8f;
+const float FLARE_PERIOD = 0.5f;
 
 class Particle {
 public:

@@ -208,7 +208,7 @@ int main(){
 	depthFrameBuffer.SetBufferToTexture(&planetShader, 3);
 	/* --- --- --- */
 	
-	ParticleManager sunParticle(PARTICLE_NUM, sun_position, 22.0f, "res/sprite/sun_sprite1.png");
+	ParticleManager sunParticle(PARTICLE_NUM, sun_position, 22.0f, "res/sprite/sun_sprite4.png");
 	
 	
 /*          ****    ****    ****        */

@@ -102,7 +102,7 @@ Particle ParticleManager::RespawnParticle(float theta_center, float phi_center) 
 	glm::vec3 random_offset = direction * randomFloat(0.0f, m_raduis * 0.05f);
 	glm::vec3 p = m_center + direction * m_raduis + random_offset;
 	
-	float magnitude = randomFloat(0.2f, 1.0f);
+	float magnitude = randomFloat(0.01f, 1.0f);
 	glm::vec3 v = direction * magnitude;
 	v += glm::cross(direction, glm::vec3(0, 1, 0)) * randomFloat(-0.05f, 0.05f);
 	
@@ -111,7 +111,7 @@ Particle ParticleManager::RespawnParticle(float theta_center, float phi_center) 
 	
 	float life = randomFloat(20.0f, 80.0f);
 	
-	float scale = randomFloat(1.0f, 5.0f);
+	float scale = randomFloat(0.4f, 1.2f);
 
 	return Particle(p, v, color, life, scale);
 }
