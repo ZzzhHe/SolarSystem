@@ -92,8 +92,8 @@ void ParticleManager::Update(float delta) {
 
 Particle ParticleManager::RespawnParticle(float theta_center, float phi_center) {
 	// Generate a random direction
-	float theta_variance = theta_center * 0.02f; // Increase the variance
-	float phi_variance = phi_center * 0.02f;
+	float theta_variance = theta_center * 0.01f; // Increase the variance
+	float phi_variance = phi_center * 0.01f;
 	float theta = randomFloat(theta_center - theta_variance, theta_center + theta_variance);
 	float phi = randomFloat(phi_center - phi_variance, phi_center + phi_variance);
 	
@@ -102,16 +102,16 @@ Particle ParticleManager::RespawnParticle(float theta_center, float phi_center) 
 	glm::vec3 random_offset = direction * randomFloat(0.0f, m_raduis * 0.05f);
 	glm::vec3 p = m_center + direction * m_raduis + random_offset;
 	
-	float magnitude = randomFloat(0.01f, 1.0f);
+	float magnitude = randomFloat(0.01f, 1.5f);
 	glm::vec3 v = direction * magnitude;
 	v += glm::cross(direction, glm::vec3(0, 1, 0)) * randomFloat(-0.05f, 0.05f);
 	
 	float rColor = randomFloat(0.5f, 1.0f);
 	glm::vec4 color = glm::vec4(rColor, rColor, rColor, 1.0f);
 	
-	float life = randomFloat(20.0f, 80.0f);
+	float life = randomFloat(15.0f, 100.0f);
 	
-	float scale = randomFloat(0.4f, 1.2f);
+	float scale = randomFloat(0.1f, 0.5f);
 
 	return Particle(p, v, color, life, scale);
 }

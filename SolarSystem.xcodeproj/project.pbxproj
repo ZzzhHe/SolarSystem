@@ -607,12 +607,8 @@
 		FEC8948A2BB37D8E00B799CD /* Particle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
 		FEC8948B2BB37D8E00B799CD /* Particle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Particle.hpp; sourceTree = "<group>"; };
 		FEC8948D2BB3B96200B799CD /* ParticleShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = ParticleShader.shader; sourceTree = "<group>"; };
-		FEC894922BB4C8A900B799CD /* sun_sprite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite.png; sourceTree = "<group>"; };
-		FEC894932BB4CAE900B799CD /* sun_sprite2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite2.png; sourceTree = "<group>"; };
-		FEC894942BB4CAE900B799CD /* sun_sprite1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite1.png; sourceTree = "<group>"; };
-		FEC894952BB4CAFE00B799CD /* sun_sprite3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite3.png; sourceTree = "<group>"; };
-		FEC894972BB4CEF700B799CD /* sun_sprite4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite4.png; sourceTree = "<group>"; };
 		FEC894982BB4D2BC00B799CD /* 4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4.png; sourceTree = "<group>"; };
+		FEC8949D2BB4F4CE00B799CD /* sun_sprite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite.png; sourceTree = "<group>"; };
 		FEDC31012BAE2B9300FF426D /* SceneObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneObject.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1732,11 +1728,7 @@
 		FEC8948E2BB49B9F00B799CD /* sprite */ = {
 			isa = PBXGroup;
 			children = (
-				FEC894972BB4CEF700B799CD /* sun_sprite4.png */,
-				FEC894942BB4CAE900B799CD /* sun_sprite1.png */,
-				FEC894932BB4CAE900B799CD /* sun_sprite2.png */,
-				FEC894952BB4CAFE00B799CD /* sun_sprite3.png */,
-				FEC894922BB4C8A900B799CD /* sun_sprite.png */,
+				FEC8949D2BB4F4CE00B799CD /* sun_sprite.png */,
 			);
 			path = sprite;
 			sourceTree = "<group>";

@@ -3,7 +3,7 @@
 #include "OtherMeshes.hpp"
 #include "Camera.hpp"
 
-const int PARTICLE_PER_FRAME = 500;
+const int PARTICLE_PER_FRAME = 2000;
 const float FLARE_PERIOD = 0.5f;
 
 class Particle {
