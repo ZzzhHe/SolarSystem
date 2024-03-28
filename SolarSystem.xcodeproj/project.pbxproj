@@ -607,8 +607,8 @@
 		FEC8948A2BB37D8E00B799CD /* Particle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
 		FEC8948B2BB37D8E00B799CD /* Particle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Particle.hpp; sourceTree = "<group>"; };
 		FEC8948D2BB3B96200B799CD /* ParticleShader.shader */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = ParticleShader.shader; sourceTree = "<group>"; };
-		FEC894982BB4D2BC00B799CD /* 4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4.png; sourceTree = "<group>"; };
 		FEC8949D2BB4F4CE00B799CD /* sun_sprite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_sprite.png; sourceTree = "<group>"; };
+		FEC8949E2BB4F68500B799CD /* 4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4.png; sourceTree = "<group>"; };
 		FEDC31012BAE2B9300FF426D /* SceneObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneObject.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1302,7 +1302,7 @@
 		FE47B6602BA7740200F4C779 /* assets */ = {
 			isa = PBXGroup;
 			children = (
-				FEC894982BB4D2BC00B799CD /* 4.png */,
+				FEC8949E2BB4F68500B799CD /* 4.png */,
 				FEC894892BB359F500B799CD /* 3.png */,
 				FEBE654B2BAE612000572301 /* 2.png */,
 				FE4AA3C12BAA7DB8008E3FBE /* 1.jpg */,
