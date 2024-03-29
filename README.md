@@ -47,6 +47,12 @@ A visually stunning simulation of the Sun, the Earth and the Moon, rendered in O
 - stb_image
 - imGUI
 
+## Assets Reference
+
+- [the Earth](https://skfb.ly/6yuSN)
+- [the Sun](https://skfb.ly/6yGSx)
+- [the Moon](https://skfb.ly/6s9oz)
+
 ## Tutorials and References
 
 - [LearnOpenGL](https://learnopengl.com/)
