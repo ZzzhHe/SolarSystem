@@ -92,8 +92,8 @@ void ParticleManager::Update(float delta) {
 
 Particle ParticleManager::RespawnParticle(float theta_center, float phi_center) {
 	// Generate a random direction
-	float theta_variance = theta_center * 0.01f; // Increase the variance
-	float phi_variance = phi_center * 0.01f;
+	float theta_variance = theta_center * 0.05f; // Increase the variance
+	float phi_variance = phi_center * 0.05f;
 	float theta = randomFloat(theta_center - theta_variance, theta_center + theta_variance);
 	float phi = randomFloat(phi_center - phi_variance, phi_center + phi_variance);
 	
