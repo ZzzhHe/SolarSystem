@@ -58,7 +58,7 @@ class DirectionalLight : public Light {
 public:
     DirectionalLight(const glm::vec3& position, const glm::vec3& color, float intensity = 1.0f)
         : Light(color, intensity), position(position),
-          ambient(color * 0.0f), diffuse(color * 0.4f), specular(color * 0.5f) {
+          ambient(color * 0.0005f), diffuse(color * 0.4f), specular(color * 0.5f) {
     }
 
     void updatgeTarget(const glm::vec3& target) {

@@ -132,30 +132,24 @@ vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow)
 	
 	// twilight zone
 	float emit = 1.0f;
-	if (diff > 0.4f) {
+	if (diff > 0.3f) {
 		emit = 0.0f;
-	} else if (diff > 0.375f) {
-		emit = 0.05f;
-	}  else if (diff > 0.35f) {
-		emit = 0.1f;
-	} else if (diff > 0.325f) {
-		emit = 0.15f;
-	} else if (diff > 0.3f) {
+	} else if (diff > 0.25f) {
 		emit = 0.2f;
 	} else if (diff > 0.2f) {
-		emit = 0.4f;
+		emit = 0.3f;
 	} else if (diff > 0.15f) {
-		emit = 0.55f;
+		emit = 0.4f;
 	} else if (diff > 0.125f) {
-		emit = 0.7f;
+		emit = 0.5f;
 	} else if (diff > 0.1f) {
-		emit = 0.8f;
+		emit = 0.6f;
 	} else if (diff > 0.075f) {
-		emit = 0.85f;
+		emit = 0.7f;
 	} else if (diff > 0.05f) {
-		emit = 0.9f;
+		emit = 0.8f;
 	} else if (diff > 0.025f) {
-		emit = 0.95f;
+		emit = 0.9f;
 	}
 	
 	vec3 emission = emissionColor.rgb * emit;
