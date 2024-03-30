@@ -1,6 +1,6 @@
 # Solar Eclipse
 
-A visually stunning simulation of the Sun, the Earth and the Moon, rendered in OpenGL with dynamic lighting to bring the celestial beauty right to screen.
+A visually stunning simulation of the Solar Eclipse and the movement of the Sun, the Earth and the Moon, rendered with OpenGL.
 
 ![1](/assets/1.jpg)
 
@@ -22,13 +22,13 @@ A visually stunning simulation of the Sun, the Earth and the Moon, rendered in O
 
 - Blinn-Phong Lighting
 - Shadow
-- HDR and Bloomy
+- HDR and Bloom
 - Particle System
 - Object Outline
 
 ## OpenGL Implementation Techniques
 
-- Model Importing
+- Model Importing with Assimp
 - Texture Mapping
 - Shadow Mapping
 - FrameBuffer
@@ -45,7 +45,7 @@ A visually stunning simulation of the Sun, the Earth and the Moon, rendered in O
 - GLAD
 - GLM
 - stb_image
-- imGUI
+- Assimp
 
 ## Assets Reference
 
