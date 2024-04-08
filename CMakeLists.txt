@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # --- Include Directories ---
 include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/include/SolarSystem)
+include_directories(${CMAKE_SOURCE_DIR}/external)
 
 
 
@@ -18,7 +18,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include/SolarSystem)
 # Source + Imgui + glad.c
 file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
-file(GLOB IMGUI_SOURCES "${CMAKE_SOURCE_DIR}/include/imgui/*.cpp")
+file(GLOB IMGUI_SOURCES "${CMAKE_SOURCE_DIR}/external/imgui/*.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES} "${CMAKE_SOURCE_DIR}/src/glad.c")
 

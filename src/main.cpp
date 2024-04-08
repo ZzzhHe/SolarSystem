@@ -28,9 +28,8 @@
 #include <vector>
 #include <memory>
 
-void processInput(GLFWwindow *window, Camera& camera); 
+void processInput(GLFWwindow *window, Camera& camera, Focus_Objects& flag);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, float far);
 
 // settings
@@ -43,14 +42,15 @@ const unsigned int SHADOW_HEIGHT = 1024;
 const int CIRCLE_PTS = 192;
 const int PARTICLE_NUM = 10000;
 
+const int ACCUMULATE_FRAME = 5;
+
+
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-bool firstMouse = true;
 
-float lastX = 400.0f, lastY = 300.0f;
 
 Camera camera;
 
@@ -79,7 +79,6 @@ int main(){
     // window -> context
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     
@@ -113,13 +112,13 @@ int main(){
 	DepthMapFrameBuffer depthFrameBuffer(SHADOW_WIDTH, SHADOW_HEIGHT);
 
 /*  -----   Shader  -----   */
-    Shader planetShader("src/shaders/PlanetShader.shader");
-    Shader starShader("src/shaders/StarShader.shader");
-    Shader hdrShader("src/shaders/HDRShader.shader");
-    Shader blurShader("src/shaders/BlurShader.shader");
-	Shader depthShader("src/shaders/DepthShader.shader");
-	Shader circleShader("src/shaders/CircleShader.shader");
-	Shader particleShader("src/shaders/ParticleShader.shader");
+    Shader planetShader("shader/PlanetShader.shader");
+    Shader starShader("shader/StarShader.shader");
+    Shader hdrShader("shader/HDRShader.shader");
+    Shader blurShader("shader/BlurShader.shader");
+	Shader depthShader("shader/DepthShader.shader");
+	Shader circleShader("shader/CircleShader.shader");
+	Shader particleShader("shader/ParticleShader.shader");
 /*  -----   -----  -----   */
 
 	/* Setup Dear ImGui context
@@ -141,8 +140,8 @@ int main(){
 /*  ----- ----- --- model --- ----- --- */
 /*          ****    ****    ****        */
 	
-	float earth_radius = 40.0f;
-	float moon_radius = 2.0f;
+	float earth_radius = -50.0f;
+	float moon_radius = 3.0f;
 	
 	glm::vec3 sun_position = glm::vec3(0.0f);
 	glm::vec3 earth_position = glm::vec3(earth_radius, 0.0f, 0.0f);
@@ -151,21 +150,21 @@ int main(){
 	// scale factors
 	float sun_scale = 2.2f;
 	float earth_scale = 0.05f;
-	float moon_scale = 0.04f;
+	float moon_scale = 0.03f;
 	
 	// rotate factors
 	float sun_rotate_speed_factor = 0.001f;
-	float earth_rotate_speed_factor = 5.0f;
-	float earth_orbit_speed_factor = 20 / 36.5f; // 1 / 365
-	float moon_rotate_orbit_speed_factor = 20 / 2.73f; // 1 / 27.3f
-	float earth_cloud_rotate_speed_factor = 6.0f;
+	float earth_rotate_speed_factor = 15.0f;
+	float earth_orbit_speed_factor = 10 / 36.5f; // 1 / 365
+	float moon_rotate_orbit_speed_factor = 10 / 2.73f; // 1 / 27.3f
+	float earth_cloud_rotate_speed_factor = 5.0f;
 	
 	
     // model
-	SceneObject Sun("res/models/sun/sun.obj", sun_position, sun_scale);
-	SceneObject Earth("res/models/earth/earth.obj", earth_position, earth_scale);
-	SceneObject Moon("res/models/moon/moon.obj", moon_position, moon_scale);
-	SceneObject EarthCloud("res/models/earth/earth_cloud.obj", earth_position, earth_scale);
+	SceneObject Sun("resources/models/sun/sun.obj", sun_position, sun_scale);
+	SceneObject Earth("resources/models/earth/earth.obj", earth_position, earth_scale);
+	SceneObject Moon("resources/models/moon/moon.obj", moon_position, moon_scale);
+	SceneObject EarthCloud("resources/models/earth/earth_cloud.obj", earth_position, earth_scale);
 	
 	// model transform - orbit
 	Sun.transform->UpdateOrbit(sun_position, 0.0f);
@@ -192,7 +191,7 @@ int main(){
 	
 
     /* --- Camera --- */
-	camera = Camera(glm::vec3(39.0f, 0.0f, 0.0f));
+	camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));
 	/* --- --- --- */
 	
 	/* preset all texture index */
@@ -210,6 +209,7 @@ int main(){
 	
 	ParticleManager sunParticle(PARTICLE_NUM, sun_position, 22.0f, "res/sprite/sun_sprite.png");
 	
+	Focus_Objects focus_flag = Focus_Objects::EARTH;
 	
 /*          ****    ****    ****        */
 /*       -----   Render Loop  -----     */
@@ -222,40 +222,54 @@ int main(){
 		sunParticle.Update(deltaTime);
 
         // input
-        processInput(window, camera);
+        processInput(window, camera, focus_flag);
+		camera.update(deltaTime);
+		
+		glm::vec3 targetPlanet = earth_position;
+		if (focus_flag == Focus_Objects::EARTH) {
+			targetPlanet = earth_position;
+		}
+		if (focus_flag == Focus_Objects::MOON) {
+			targetPlanet = moon_position;
+		}
+		if (focus_flag == Focus_Objects::SUN) {
+			targetPlanet = sun_position;
+		}
+
+		camera.focusOn(targetPlanet);
 		
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.f);
-		glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.1f, 10.0f);
+		glm::mat4 lightSpaceMat = GetLightSpaceMatrix(sun_position, earth_position, 0.01f, 50.0f);
 
 		/* --- Transform --- */
 		float time = glfwGetTime() * 0.1f;
 		float sun_rotate_degree = time * sun_rotate_speed_factor;
-		float earth_rotate_degree = -30.0f + time * earth_rotate_speed_factor;
-		float earth_orbit_degree = time * earth_orbit_speed_factor;
+		float earth_rotate_degree = -170.0f + time * earth_rotate_speed_factor; // -170
+		float earth_orbit_degree = 25.0f + time * earth_orbit_speed_factor;
 		float moon_rotate_degree = -90.0f + time *  moon_rotate_orbit_speed_factor;
-		float moon_orbit_degree = time *  moon_rotate_orbit_speed_factor;
+		float moon_orbit_degree = 140.0f + time *  moon_rotate_orbit_speed_factor; // 30.0f
 		float moon_orbit_incline_degree = std::abs(5.0f * glm::sin(glm::radians(moon_orbit_degree)));
-		float earth_cloud_rotate_degree = time * earth_cloud_rotate_speed_factor;
+		float earth_cloud_rotate_degree = 20.0f - time * earth_cloud_rotate_speed_factor;
 		
         Sun.transform->UpdateRotation(glm::vec3(0.0f, sun_rotate_degree, 0.0f));
 		
-		Earth.transform->UpdateRotation(glm::vec3(0.0f, earth_rotate_degree, 23.5f));
+		Earth.transform->UpdateRotation(glm::vec3(23.5f, earth_rotate_degree, 23.5f));
 		Earth.transform->UpdateOrbition(glm::vec3(0.0f, earth_orbit_degree, 0.0f));
 		earth_position = Earth.transform->GetPosition();
 		
 		EarthCloud.transform = Earth.transform->clone();
-		EarthCloud.transform->UpdateRotation(glm::vec3(0.0f, -earth_cloud_rotate_degree, 23.5f));
+		EarthCloud.transform->UpdateRotation(glm::vec3(23.5f, earth_cloud_rotate_degree, 0.0f));
 		
 		Moon.transform->UpdateRotation(glm::vec3(0.0f, moon_rotate_degree, 0.0f));
 		Moon.transform->UpdateOrbition(glm::vec3(moon_orbit_incline_degree, moon_orbit_degree, 0.0f));
 		Moon.transform->UpdateOrbitCenter(earth_position);
 		moon_position = Moon.transform->GetPosition();
 		
-		CircleMoon.transform->UpdateOrbition(glm::vec3(5.0f, 0.0f, 0.0f));
+		CircleMoon.transform->UpdateOrbition(glm::vec3(2.0f, 0.0f, 0.0f));
 		CircleMoon.transform->UpdateOrbitCenter(earth_position);
 		/* --- --- --- */
-								  
+
         renderer.Clear();
         /* --- Depth Frame Buffer for shadow mapping --- */
 		GLCall(glViewport(0, 0, SHADOW_WIDTH * 2, SHADOW_HEIGHT * 2));
@@ -267,7 +281,6 @@ int main(){
 			depthShader.Use();
 			depthShader.setMat4("lightSpaceMatrix", lightSpaceMat);
 			Earth.Render(&depthShader);
-			EarthCloud.Render(&depthShader);
 			Moon.Render(&depthShader);
 		
 		depthFrameBuffer.CullBackFace();
@@ -393,23 +406,45 @@ int main(){
 
 // handling user input for a given window 
 // query GLFW whether relevant keys are pressed/released this frame and react accordingly
-void processInput(GLFWwindow *window, Camera& camera) {
+void processInput(GLFWwindow *window, Camera& camera, Focus_Objects& flag) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         camera.processKeyboard(FORWARD, deltaTime);
     }
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         camera.processKeyboard(BACKWARD, deltaTime);
     }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         camera.processKeyboard(RIGHT, deltaTime);
     }
-    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         camera.processKeyboard(LEFT, deltaTime);
     }
+	
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+		camera.Position = glm::vec3(0.0f, 5.0f, 0.0f);
+		camera.focusDistance = 1.0f;
+		flag = Focus_Objects::EARTH;
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		camera.Position = glm::vec3(-60.0f, 15.0f, 0.0f);
+		camera.focusDistance = 2.0f;
+		flag = Focus_Objects::EARTH;
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		camera.Position = glm::vec3(-10.0f, 5.0f, 0.0f);
+		camera.focusDistance = 0.7f;
+		flag = Focus_Objects::MOON;
+	}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		camera.Position = glm::vec3(-100.0f, 1.5f, 0.0f);
+		flag = Focus_Objects::EARTH;
+		camera.focusDistance = 60.0f;
+	}
+	camera.targetFocusDistance = camera.focusDistance;
 }
 
 // this callback function executes whenever the window size changed 
@@ -419,27 +454,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = ypos - lastY;
-    lastX = xpos;
-    lastY = ypos;
-
-    camera.processMouse(xoffset, yoffset);
-}
-
 glm::mat4 GetLightSpaceMatrix(glm::vec3 position, glm::vec3 lookat, float near, float far) {
 	glm::mat4 lightProjection, lightView;
 	lightProjection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, near, far);
-	lightView = glm::lookAt(position + lookat * 0.94f, lookat, glm::vec3(0.0, 1.0, 0.0));
+	lightView = glm::lookAt(position + lookat * 0.90f, lookat, glm::vec3(0.0, 1.0, 0.0));
 	return lightProjection * lightView;
 }
