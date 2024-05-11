@@ -8,6 +8,8 @@ A visually stunning simulation of the Solar Eclipse and the movement of the Sun,
 
 ![4](/assets/4.png)
 
+![5](/assets/5.png)
+
 [demo video](https://youtu.be/_d7pxzLYDqM?si=6LLu_GMGIJ3vC-_X)
 
 ## Simulation
@@ -18,34 +20,33 @@ A visually stunning simulation of the Solar Eclipse and the movement of the Sun,
 - lunar eclipse and phases
 - terminator
 
-## Advanced Rendering Techniques
+## Features
 
+- load .obj model using Assimp
+- Animation for cameras, objects
+  - Camera Focus
 - Blinn-Phong Lighting
+  - Point
+  - Directional
+  - Spot Lights
 - Shadow
-- HDR and Bloom
+  - shadow map
+- PostProcessing
+  - HDR / Tonemapping
+  - Bloom
 - Particle System
 - Object Outline
-
-## OpenGL Implementation Techniques
-
-- Model Importing with Assimp
-- Texture Mapping
-- Shadow Mapping
-- FrameBuffer
-- Billboard
-- Stencil Testing
-
-## Next Step
-
-- Object Picking by cursor
+- Object Picking
+- In-app user interface using Dear ImGui
 
 ## Packages
 
-- GLFW3
-- GLAD
-- GLM
-- stb_image
-- Assimp
+- [GLFW3](https://github.com/glfw/glfw)
+- [GLAD](https://github.com/Dav1dde/glad)
+- [GLM](https://github.com/g-truc/glm)
+- [stb_image](https://github.com/nothings/stb/blob/master/stb_image.h)
+- [Assimp](https://github.com/assimp/assimp)
+- [Dear ImGui](https://github.com/ocornut/imgui)
 
 ## Assets Reference
 
