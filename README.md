@@ -1,43 +1,81 @@
 # Solar Eclipse
 
-A visually stunning simulation of the Solar Eclipse and the movement of the Sun, the Earth and the Moon, rendered with OpenGL.
+A visually stunning OpenGL-based simulation of the Solar Eclipse system, featuring realistic celestial body movements, atmospheric effects, and advanced rendering techniques.
 
 ![1](/assets/1.jpg)
 
-![3](/assets/3.png)
+[Original demo video](https://youtu.be/_d7pxzLYDqM?si=6LLu_GMGIJ3vC-_X)
 
-![4](/assets/4.png)
+## Celestial Simulation Features
 
-![5](/assets/5.png)
+- Accurate celestial mechanics:
+  - Earth's rotation (23.5° axial tilt) and orbital motion around the Sun
+  - Moon's orbit around Earth with inclination variations
+  - Solar rotation and corona visualization
+- Atmospheric and space phenomena:
+  - Dynamic solar flare particle system with realistic dispersion
+  - Twilight zone (terminator line) visualization
+  - Realistic shadow casting and eclipse simulation
+  - Cloud layer simulation for Earth
 
-[demo video](https://youtu.be/_d7pxzLYDqM?si=6LLu_GMGIJ3vC-_X)
+## Technical Implementation
 
-## Simulation
+### Core Systems
+- Custom OpenGL rendering pipeline with modern shader-based architecture
+- Robust scene graph system with hierarchical transformations
+- Advanced camera system with smooth transitions and focus tracking
+- Multi-pass rendering system for effects processing
 
-- the self-rotation of the Earth, the Moon and the Sun 
-- the Earth's orbit around the Sun and the Moon's orbit around the Earth
-- solar flare storms
-- lunar eclipse and phases
-- terminator
+### Graphics Features
+- Physically-based lighting using Blinn-Phong illumination model
+- Advanced shadow mapping with PCF (Percentage Closer Filtering)
+- HDR rendering with bloom post-processing
+  - Two-pass Gaussian blur for smooth light bleeding
+  - Adaptive exposure and tone mapping
+- Particle system for solar phenomena
+  - GPU-accelerated particle rendering
+  - Dynamic particle lifecycle management
+- Mesh loading and optimization using Assimp
+- Custom vertex buffer management system
+- Stencil buffer-based object outlining
 
-## Features
+### Performance Optimizations
+- Efficient buffer management with modern OpenGL practices
+- Optimized shadow map resolution scaling
+- Smart texture management with mipmap generation
+- Batched rendering for particle systems
 
-- load .obj model using Assimp
-- Animation for cameras, objects
-  - Camera Focus
-- Blinn-Phong Lighting
-  - Point
-  - Directional
-  - Spot Lights
-- Shadow
-  - shadow map
-- PostProcessing
-  - HDR / Tonemapping
-  - Bloom
-- Particle System
-- Object Outline
-- Object Picking
-- In-app user interface using Dear ImGui
+## Controls
+- Arrow keys: Camera movement
+- Q: Reset to Earth view
+- W: Wide Earth view
+- E: Moon focus
+- R: Solar system overview
+
+## Build Requirements
+- CMake 3.20 or higher
+- C++17 compatible compiler
+- Dependencies:
+  - GLFW 3.4+
+  - GLM
+  - Assimp
+  - OpenGL 4.1+
+
+## Dependencies
+- GLFW3: Window management and OpenGL context
+- GLAD: OpenGL function loader
+- GLM: Mathematics library
+- stb_image: Image loading
+- Assimp: 3D model importing
+- Dear ImGui: Debug interface (currently disabled)
+
+## Build Instructions
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
 
 ## Packages
 
